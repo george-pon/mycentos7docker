@@ -3,7 +3,7 @@ FROM centos:centos7
 ENV MYCENTOS7DOCKER_VERSION build-target
 ENV MYCENTOS7DOCKER_VERSION latest
 ENV MYCENTOS7DOCKER_VERSION stable
-ENV MYCENTOS7DOCKER_IMAGE mycentos7docker
+ENV MYCENTOS7DOCKER_IMAGE georgesan/mycentos7docker
 
 # 参考
 # https://qiita.com/0ashina0/items/f8b960e822a40a6a2eed Window10に日本語対応CentOS7のdockerコンテナを作ってみた - Qiita
