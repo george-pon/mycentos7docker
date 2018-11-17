@@ -47,6 +47,7 @@ RUN yes | yum search kubectl --showduplicates
 RUN yum install -y kubectl-1.11.4-0 && yum clean all
 
 ADD bashrc /root/.bashrc
+ADD bash_profile /root/.bash_profile
 ENV HOME /root
 ENV ENV $HOME/.bashrc
 
