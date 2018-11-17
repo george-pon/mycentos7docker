@@ -1,12 +1,12 @@
 # mycentos7docker
 
-My CentOS7 docker image for convinient.
-
-This image includes man pages, iproute, bind-utils, jq, kubectl.
+This image is convinient environment on CentOS 7
+includes man pages, iproute, bind-utils, jq, kubectl CLI.
 
 ### how to use
 
-from Docker
+example 1 : run via Docker
+
 ```
 function docker-run-mycentos7docker() {
     docker run -i -t --rm \
@@ -16,7 +16,8 @@ function docker-run-mycentos7docker() {
 docker-run-mycentos7docker
 ```
 
-from Kubernetes
+example 2 : run via Kubernetes
+
 ```
 function kube-run-mycentos7docker() {
     tmp_no_proxy=$( echo $no_proxy | sed -e 's/,/\,/g' )
