@@ -5,7 +5,7 @@ ENV MYCENTOS7DOCKER_VERSION latest
 ENV MYCENTOS7DOCKER_VERSION stable
 ENV MYCENTOS7DOCKER_IMAGE georgesan/mycentos7docker
 
-# 参考
+# see also
 # https://qiita.com/0ashina0/items/f8b960e822a40a6a2eed Window10に日本語対応CentOS7のdockerコンテナを作ってみた - Qiita
 
 # CentOS ProjectのGPG公開鍵をインストールする
@@ -47,8 +47,8 @@ RUN yes | yum search kubectl --showduplicates
 RUN yum install -y kubectl-1.11.4-0 && yum clean all
 
 ADD bashrc /root/.bashrc
-ADD bash_profile /root/.bash_profile
 ENV HOME /root
 ENV ENV $HOME/.bashrc
 
 CMD ["/bin/bash"]
+

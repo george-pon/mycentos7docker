@@ -1,11 +1,11 @@
 # mycentos7docker
 
-This image is convinient environment on CentOS 7
+This image is my convinient environment on CentOS 7
 includes man pages, iproute, bind-utils, jq, kubectl CLI.
 
-### how to use
+## how to use
 
-#### run via Docker
+### run via Docker
 
 ```
 function docker-run-mycentos7docker() {
@@ -16,7 +16,7 @@ function docker-run-mycentos7docker() {
 docker-run-mycentos7docker
 ```
 
-#### run via Kubernetes
+### run via Kubernetes
 
 ```
 function kube-run-mycentos7docker() {
@@ -27,7 +27,7 @@ function kube-run-mycentos7docker() {
 kube-run-mycentos7docker
 ```
 
-#### run via Kubernetes with service account
+### run via Kubernetes with service account
 
 This pod runs with service account mycentos7docker that has ClusterRoleBindings cluster-admin.
 
@@ -61,12 +61,21 @@ function kube-run-mycentos7docker() {
         --env="http_proxy=${http_proxy}" --env="https_proxy=${https_proxy}" --env="no_proxy=${tmp_no_proxy}"
 }
 
-# run with option -n namespace
 kube-run-mycentos7docker -n default
 ```
 
 
-#### other tips winpty ( Git-Bash for Windows )(MSYS2)
+### tips run kubectl in kubernetes pod
+
+```
+kubectl proxy &
+kubectl get cluster-info
+kubectl get pod,svc
+```
+
+
+
+### other tips winpty ( Git-Bash for Windows )(MSYS2)
 
 the environment variable WINPTY_CMD is set by below.
 
@@ -92,3 +101,13 @@ function check_winpty() {
 check_winpty
 
 ```
+
+### how to build
+
+```
+bash build-image.sh
+```
+
+
+
+
