@@ -14,10 +14,29 @@ function f_docker_build() {
     TAG_CAR=$(car $TAG_LIST)
     TAG_CDR=$(cdr $TAG_LIST)
     echo $TAG_CDR
-    IMAGE_NAME=$(awk '/^ENV MYCENTOS7DOCKER_IMAGE/ {print $3;}' Dockerfile)
+    IMAGE_NAME=${PREFIX}$(awk '/^ENV MYCENTOS7DOCKER_IMAGE/ {print $3;}' Dockerfile)
+
+    if [ ! -z "$HTTP_PROXY" ]; then
+        BUILD_OPT="$BUILD_OPT  --build-arg HTTP_PROXY=$HTTP_PROXY"
+    fi
+    if [ ! -z "$HTTPS_PROXY" ]; then
+        BUILD_OPT="$BUILD_OPT  --build-arg HTTPS_PROXY=$HTTPS_PROXY"
+    fi
+    if [ ! -z "$http_proxy" ]; then
+        BUILD_OPT="$BUILD_OPT  --build-arg http_proxy=$http_proxy"
+    fi
+    if [ ! -z "$https_proxy" ]; then
+        BUILD_OPT="$BUILD_OPT  --build-arg https_proxy=$https_proxy"
+    fi
+    if [ ! -z "$NO_PROXY" ]; then
+        BUILD_OPT="$BUILD_OPT  --build-arg NO_PROXY=$NO_PROXY"
+    fi
+    if [ ! -z "$no_proxy" ]; then
+        BUILD_OPT="$BUILD_OPT  --build-arg no_proxy=$no_proxy"
+    fi
 
     if [ ! -z "$no_cache" ]; then
-        BUILD_OPT="$BUILD_OPT --no-cache"
+        BUILD_OPT="$BUILD_OPT  --no-cache=$no_cache"
     fi
 
     echo docker build -t ${IMAGE_NAME}:${TAG_CAR} .
