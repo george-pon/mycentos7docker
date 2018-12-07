@@ -82,16 +82,14 @@ the environment variable WINPTY_CMD is set by below.
 ```
 # set WINPTY_CMD environment variable when it need.
 function check_winpty() {
-    if type tty.exe ; then
-        if type winpty.exe ; then
+    if type tty.exe > /dev/null ; then
+        if type winpty.exe > /dev/null ; then
             local ttycheck=$( tty | grep "/dev/pty" )
             if [ ! -z "$ttycheck" ]; then
                 export WINPTY_CMD=winpty
-                echo "winpty"
                 return 0
             else
                 export WINPTY_CMD=
-                echo ""
                 return 0
             fi
         fi
