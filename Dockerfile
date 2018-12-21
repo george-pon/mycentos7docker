@@ -37,6 +37,9 @@ RUN yum install -y jq && yum clean all
 # ansibleインストール
 RUN yum install -y ansible && yum clean all
 
+# git インストール
+RUN yum install -y git && yum clean all
+
 # kubectl CLIインストール
 RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "[kubernetes]" >> /etc/yum.repos.d/kubernetes.repo && \
