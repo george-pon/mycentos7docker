@@ -8,39 +8,39 @@ ENV MYCENTOS7DOCKER_IMAGE mycentos7docker
 # see also
 # https://qiita.com/0ashina0/items/f8b960e822a40a6a2eed Window10に日本語対応CentOS7のdockerコンテナを作ってみた - Qiita
 
-# CentOS ProjectのGPG公開鍵をインストールする
+# install CentOS Project GPG public key
 RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
-# インストール済みのパッケージをアップデート＆キャッシュのクリア
+# update all packages
 RUN yum -y update && yum clean all
 
-# 言語を日本語に設定
+# set locale to Japanese
 RUN localedef -i ja_JP -f UTF-8 ja_JP.UTF-8
 RUN echo 'LANG="ja_JP.UTF-8"' >  /etc/locale.conf
 ENV LANG ja_JP.UTF-8
 
-# manをインストールする前に、manファイルをインストールするように設定変更
+# set install flag manual page
 RUN sed -i -e"s/^tsflags=nodocs/\# tsflags=nodocs/" /etc/yum.conf
 
-# manと、man-pagesをインストール
+# install man, man-pages
 RUN yum -y install man man-pages man-pages-ja && yum clean all
 
-# ネットワーク系のコマンド追加
+# install network utils
 RUN yum install -y iproute net-tools bind-utils && yum clean all
 
-# EPELリポジトリ追加
+# add EPEL yum repository
 RUN yum install -y epel-release && yum clean all
 
-# jqインストール
+# install jq
 RUN yum install -y jq && yum clean all
 
-# ansibleインストール
+# install ansible
 RUN yum install -y ansible && yum clean all
 
-# git インストール
+# install git
 RUN yum install -y git && yum clean all
 
-# kubectl CLIインストール
+# install kubectl CLI
 RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "[kubernetes]" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "name=Kubernetes" >> /etc/yum.repos.d/kubernetes.repo && \
