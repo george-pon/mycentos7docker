@@ -52,6 +52,19 @@ RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
 RUN yes | yum search kubectl --showduplicates
 RUN yum install -y kubectl-1.11.4-0 && yum clean all
 
+# install helm CLI v2.9.1
+RUN curl -LO https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz && \
+    tar xzf  helm-v2.9.1-linux-amd64.tar.gz && \
+    /bin/cp  linux-amd64/helm   /usr/bin && \
+    /bin/rm -rf rm helm-v2.9.1-linux-amd64.tar.gz linux-amd64
+
+# install kompose v1.17.0
+RUN curl -LO https://github.com/kubernetes/kompose/releases/download/v1.17.0/kompose-linux-amd64.tar.gz && \
+    tar xzf kompose-linux-amd64.tar.gz && \
+    chmod +x kompose-linux-amd64 && \
+    mv kompose-linux-amd64 /usr/bin/kompose && \
+    rm kompose-linux-amd64.tar.gz
+
 ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
