@@ -75,6 +75,11 @@ RUN curl -LO https://github.com/kubernetes/kompose/releases/download/v1.17.0/kom
     mv kompose-linux-amd64 /usr/bin/kompose && \
     rm kompose-linux-amd64.tar.gz
 
+# install stern
+RUN curl -LO https://github.com/wercker/stern/releases/download/1.10.0/stern_linux_amd64 && \
+    chmod +x stern_linux_amd64 && \
+    mv stern_linux_amd64 /usr/bin/stern
+
 ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
