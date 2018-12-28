@@ -5,8 +5,6 @@ ENV MYCENTOS7DOCKER_VERSION latest
 ENV MYCENTOS7DOCKER_VERSION stable
 ENV MYCENTOS7DOCKER_IMAGE mycentos7docker
 
-# see also
-# https://qiita.com/0ashina0/items/f8b960e822a40a6a2eed Window10に日本語対応CentOS7のdockerコンテナを作ってみた - Qiita
 
 # install CentOS Project GPG public key
 RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
@@ -39,6 +37,18 @@ RUN yum install -y ansible && yum clean all
 
 # install git
 RUN yum install -y git && yum clean all
+
+# install other tools
+RUN yum install -y openssh-server openssh-clients make wget sudo vim && yum clean all
+
+# install docker client
+ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
+RUN curl -fSL "$DOCKERURL" -o docker.tgz \
+    && tar -xzvf docker.tgz \
+    && mv docker/* /usr/bin/ \
+    && rmdir docker \
+    && rm docker.tgz \
+    && chmod +x /usr/bin/docker 
 
 # install kubectl CLI
 RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \

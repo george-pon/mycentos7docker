@@ -107,5 +107,11 @@ bash build-image.sh
 ```
 
 
+### see also
+
+* https://qiita.com/0ashina0/items/f8b960e822a40a6a2eed Window10に日本語対応CentOS7のdockerコンテナを作ってみた - Qiita
+
+
+
 
 
