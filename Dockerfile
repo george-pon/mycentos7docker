@@ -92,6 +92,7 @@ ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ADD bashrc /root/.bashrc
+ADD bash_profile /root/.bash_profile
 ENV HOME /root
 ENV ENV $HOME/.bashrc
 
