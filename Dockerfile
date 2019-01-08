@@ -82,8 +82,8 @@ RUN curl -LO https://github.com/wercker/stern/releases/download/1.10.0/stern_lin
 
 # install yamlsort
 RUN yum install -y unzip && yum clean all && \
-    curl -LO https://github.com/george-pon/yamlsort/files/2724561/linux_amd64_yamlsort.zip && \
-    unzip -u linux_amd64_yamlsort.zip && \
+    curl -LO https://github.com/george-pon/yamlsort/releases/download/v0.1.4/linux_amd64_yamlsort_v0.1.4.zip && \
+    unzip -u linux_amd64_yamlsort_v0.1.4.zip && \
     chmod +x linux_amd64_yamlsort && \
     cp linux_amd64_yamlsort /usr/bin/yamlsort
 
