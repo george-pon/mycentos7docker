@@ -85,7 +85,8 @@ RUN yum install -y unzip && yum clean all && \
     curl -LO https://github.com/george-pon/yamlsort/releases/download/v0.1.4/linux_amd64_yamlsort_v0.1.4.zip && \
     unzip -o linux_amd64_yamlsort_v0.1.4.zip && \
     chmod +x linux_amd64_yamlsort && \
-    cp linux_amd64_yamlsort /usr/bin/yamlsort
+    mv linux_amd64_yamlsort /usr/bin/yamlsort && \
+    rm linux_amd64_yamlsort_v0.1.4.zip
 
 ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
