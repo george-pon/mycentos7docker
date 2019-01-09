@@ -82,11 +82,11 @@ RUN curl -LO https://github.com/wercker/stern/releases/download/1.10.0/stern_lin
 
 # install yamlsort
 RUN yum install -y unzip && yum clean all && \
-    curl -LO https://github.com/george-pon/yamlsort/releases/download/v0.1.5/linux_amd64_yamlsort_v0.1.5.tar.gz && \
-    tar xzf linux_amd64_yamlsort_v0.1.5.tar.gz && \
+    curl -LO https://github.com/george-pon/yamlsort/releases/download/v0.1.5/linux_amd64_yamlsort_v0.1.6.tar.gz && \
+    tar xzf linux_amd64_yamlsort_v0.1.6.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
     mv linux_amd64_yamlsort /usr/bin/yamlsort && \
-    rm linux_amd64_yamlsort_v0.1.5.tar.gz
+    rm linux_amd64_yamlsort_v0.1.6.tar.gz
 
 ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
