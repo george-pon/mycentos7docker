@@ -51,6 +51,7 @@ RUN curl -fSL "$DOCKERURL" -o docker.tgz \
     && chmod +x /usr/bin/docker 
 
 # install kubectl CLI
+ENV KUBECTL_CLIENT_VERSION 1.11.4-0
 RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "[kubernetes]" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "name=Kubernetes" >> /etc/yum.repos.d/kubernetes.repo && \
@@ -60,28 +61,31 @@ RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "repo_gpgcheck=1" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg" >> /etc/yum.repos.d/kubernetes.repo
 RUN yes | yum search kubectl --showduplicates
-RUN yum install -y kubectl-1.11.4-0 && yum clean all
+RUN yum install -y kubectl-${KUBECTL_CLIENT_VERSION} && yum clean all
 
 # install helm CLI v2.9.1
-RUN curl -LO https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz && \
-    tar xzf  helm-v2.9.1-linux-amd64.tar.gz && \
+ENV HELM_CLIENT_VERSION v2.9.1
+RUN curl -LO https://storage.googleapis.com/kubernetes-helm/helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz && \
+    tar xzf  helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz && \
     /bin/cp  linux-amd64/helm   /usr/bin && \
-    /bin/rm -rf rm helm-v2.9.1-linux-amd64.tar.gz linux-amd64
+    /bin/rm -rf rm helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz linux-amd64
 
 # install kompose v1.17.0
-RUN curl -LO https://github.com/kubernetes/kompose/releases/download/v1.17.0/kompose-linux-amd64.tar.gz && \
+ENV KOMPOSE_VERSION v1.17.0
+RUN curl -LO https://github.com/kubernetes/kompose/releases/download/${KOMPOSE_VERSION}/kompose-linux-amd64.tar.gz && \
     tar xzf kompose-linux-amd64.tar.gz && \
     chmod +x kompose-linux-amd64 && \
     mv kompose-linux-amd64 /usr/bin/kompose && \
     rm kompose-linux-amd64.tar.gz
 
 # install stern
-RUN curl -LO https://github.com/wercker/stern/releases/download/1.10.0/stern_linux_amd64 && \
+ENV STERN_VERSION 1.10.0
+RUN curl -LO https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64 && \
     chmod +x stern_linux_amd64 && \
     mv stern_linux_amd64 /usr/bin/stern
 
 # install yamlsort
-ENV YAMLSORT_VERSION v0.1.7
+ENV YAMLSORT_VERSION v0.1.8
 RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
