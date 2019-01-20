@@ -92,6 +92,15 @@ RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT
     mv linux_amd64_yamlsort /usr/bin/yamlsort && \
     rm linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz
 
+# install envsubst
+RUN yum install -y gettext && yum clean all
+
+# install kustomize
+ENV KUSTOMIZE_VERSION 1.0.11
+RUN curl -LO https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
+    chmod +x kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
+    mv kustomize_${KUSTOMIZE_VERSION}_linux_amd64 /usr/bin/kustomize
+
 ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
