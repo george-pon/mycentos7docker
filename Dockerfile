@@ -85,7 +85,7 @@ RUN curl -LO https://github.com/wercker/stern/releases/download/${STERN_VERSION}
     mv stern_linux_amd64 /usr/bin/stern
 
 # install yamlsort
-ENV YAMLSORT_VERSION v0.1.9
+ENV YAMLSORT_VERSION v0.1.10
 RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
