@@ -39,7 +39,7 @@ RUN yum install -y ansible && yum clean all
 RUN yum install -y git && yum clean all
 
 # install other tools
-RUN yum install -y openssh-server openssh-clients make wget sudo vim && yum clean all
+RUN yum install -y openssh-server openssh-clients make wget sudo vim expect && yum clean all
 
 # install docker client
 ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
