@@ -84,14 +84,6 @@ RUN curl -LO https://github.com/wercker/stern/releases/download/${STERN_VERSION}
     chmod +x stern_linux_amd64 && \
     mv stern_linux_amd64 /usr/bin/stern
 
-# install yamlsort
-ENV YAMLSORT_VERSION v0.1.11
-RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
-    tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
-    chmod +x linux_amd64_yamlsort && \
-    mv linux_amd64_yamlsort /usr/bin/yamlsort && \
-    rm linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz
-
 # install envsubst
 RUN yum install -y gettext && yum clean all
 
@@ -100,6 +92,14 @@ ENV KUSTOMIZE_VERSION 1.0.11
 RUN curl -LO https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
     chmod +x kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
     mv kustomize_${KUSTOMIZE_VERSION}_linux_amd64 /usr/bin/kustomize
+
+# install yamlsort
+ENV YAMLSORT_VERSION v0.1.12
+RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
+    tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
+    chmod +x linux_amd64_yamlsort && \
+    mv linux_amd64_yamlsort /usr/bin/yamlsort && \
+    rm linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz
 
 ADD docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
