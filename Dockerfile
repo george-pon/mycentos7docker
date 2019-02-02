@@ -9,6 +9,9 @@ ENV MYCENTOS7DOCKER_IMAGE mycentos7docker
 # install CentOS Project GPG public key
 RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
+# set install flag manual page
+RUN sed -i -e"s/^tsflags=nodocs/\# tsflags=nodocs/" /etc/yum.conf
+
 # update all packages
 RUN yum -y update && yum clean all
 
@@ -17,29 +20,29 @@ RUN localedef -i ja_JP -f UTF-8 ja_JP.UTF-8
 RUN echo 'LANG="ja_JP.UTF-8"' >  /etc/locale.conf
 ENV LANG ja_JP.UTF-8
 
-# set install flag manual page
-RUN sed -i -e"s/^tsflags=nodocs/\# tsflags=nodocs/" /etc/yum.conf
-
 # install man, man-pages
 RUN yum -y install man man-pages man-pages-ja && yum clean all
-
-# install network utils
-RUN yum install -y iproute net-tools bind-utils && yum clean all
 
 # add EPEL yum repository
 RUN yum install -y epel-release && yum clean all
 
-# install jq
-RUN yum install -y jq && yum clean all
-
-# install ansible
-RUN yum install -y ansible && yum clean all
-
-# install git
-RUN yum install -y git && yum clean all
-
-# install other tools
-RUN yum install -y openssh-server openssh-clients make wget sudo vim expect && yum clean all
+# install tools
+RUN yum install -y \
+        jq \
+        git \
+        ansible \
+        iproute \
+        net-tools \
+        bind-utils \
+        openssh-server \
+        openssh-clients \
+        make \
+        wget \
+        sudo \
+        vim \
+        expect \
+        gettext \
+    && yum clean all
 
 # install docker client
 ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
@@ -83,9 +86,6 @@ ENV STERN_VERSION 1.10.0
 RUN curl -LO https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64 && \
     chmod +x stern_linux_amd64 && \
     mv stern_linux_amd64 /usr/bin/stern
-
-# install envsubst
-RUN yum install -y gettext && yum clean all
 
 # install kustomize
 ENV KUSTOMIZE_VERSION 1.0.11
