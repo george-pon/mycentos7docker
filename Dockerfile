@@ -42,6 +42,7 @@ RUN yum install -y \
         vim \
         expect \
         gettext \
+        tree \
     && yum clean all
 
 # install docker client
