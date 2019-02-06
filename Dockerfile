@@ -95,7 +95,7 @@ RUN curl -LO https://github.com/kubernetes-sigs/kustomize/releases/download/v${K
     mv kustomize_${KUSTOMIZE_VERSION}_linux_amd64 /usr/bin/kustomize
 
 # install yamlsort
-ENV YAMLSORT_VERSION v0.1.13
+ENV YAMLSORT_VERSION v0.1.14
 RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
