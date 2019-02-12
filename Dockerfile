@@ -94,6 +94,12 @@ RUN curl -LO https://github.com/kubernetes-sigs/kustomize/releases/download/v${K
     chmod +x kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
     mv kustomize_${KUSTOMIZE_VERSION}_linux_amd64 /usr/bin/kustomize
 
+# install kubectx, kubens. see https://github.com/ahmetb/kubectx
+RUN curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && \
+    curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens && \
+    chmod +x kubectx kubens && \
+    mv kubectx kubens /usr/local/bin
+
 # install yamlsort
 ENV YAMLSORT_VERSION v0.1.14
 RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
