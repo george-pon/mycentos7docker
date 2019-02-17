@@ -42,6 +42,7 @@ RUN yum install -y \
         vim \
         expect \
         gettext \
+        traceroute \
         tree \
     && yum clean all
 
