@@ -33,6 +33,7 @@ RUN yum install -y \
         ansible \
         iproute \
         net-tools \
+        nmap-ncat \
         bind-utils \
         openssh-server \
         openssh-clients \
@@ -44,6 +45,8 @@ RUN yum install -y \
         gettext \
         traceroute \
         tree \
+        zip \
+        unzip \
     && yum clean all
 
 # install docker client
