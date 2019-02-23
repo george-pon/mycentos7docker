@@ -111,12 +111,12 @@ function f-rsync-escape-relative() {
 #
 function f-kube-run-v() {
 
-    # check PWD ( / で実行はできない )
+    # check PWD ( / で実行は許可しない )
     if [ x"$PWD"x = x"/"x ]; then
         echo "kube-run-v: can not run. PWD is / . abort."
         return 1
     fi
-    # check PWD ( /tmp で実行はできない )
+    # check PWD ( /tmp で実行は許可しない )
     if [ x"$PWD"x = x"/tmp"x ]; then
         echo "kube-run-v: can not run. PWD is /tmp . abort."
         return 1
@@ -151,7 +151,7 @@ function f-kube-run-v() {
     local i_or_tty=
     local image=georgesan/mycentos7docker:latest
     local pod_name_prefix=
-    local pod_timeout=300
+    local pod_timeout=600
     local imagePullOpt=
     local command_line=
     local env_opts=
@@ -293,7 +293,11 @@ function f-kube-run-v() {
         fi
         if [ x"$1"x = x"--carry-on-kubeconfig"x ]; then
             carry_on_kubeconfig=yes
-            carry_on_kubeconfig_file=$( realpath $( mktemp "$PWD/../kube-run-v-kubeconfig-XXXXXXXXXXXX" ) )
+            shift
+            continue
+        fi
+        if [ x"$1"x = x"++carry-on-kubeconfig"x ]; then
+            carry_on_kubeconfig=no
             shift
             continue
         fi
@@ -378,7 +382,19 @@ function f-kube-run-v() {
     if [ ! -z "$docker_pull" ]; then
         $DOCKER_SUDO_CMD docker pull $image
     fi
-    if [ ! -z "$carry_on_kubeconfig" ]; then
+
+    # carry_on_kubeconfig
+    if [ -z "$carry_on_kubeconfig" ]; then
+        # automatic detect
+        local kubectl_current_context=$( kubectl config current-context )
+        if [ x"$kubectl_current_context"x = x"docker-for-desktop"x ]; then
+            carry_on_kubeconfig=no
+        else
+            carry_on_kubeconfig=yes
+        fi
+    fi
+    if [ x"$carry_on_kubeconfig"x = x"yes"x  ]; then
+        carry_on_kubeconfig_file=$( realpath $( mktemp "$PWD/../kube-run-v-kubeconfig-XXXXXXXXXXXX" ) )
         kubectl config view --raw > $carry_on_kubeconfig_file
         RC=$? ; if [ $RC -ne 0 ]; then echo "  kubectl config view failed. abort." ; return 1; fi
         pseudo_volume_list="$pseudo_volume_list $carry_on_kubeconfig_file:~/.kube/config"
@@ -430,9 +446,10 @@ function f-kube-run-v() {
             local STATUS=$(kubectl ${kubectl_cmd_namespace_opt} get pod/${POD_NAME} | awk '{print $3}' | grep Running)
             RC=$? ; if [ $RC -ne 0 ]; then echo "error. abort." ; return $RC; fi
             if [ ! -z "$STATUS" ]; then
+                echo ""
                 break
             fi
-            echo -n -e "waiting for running pod ... $count / $pod_timeout seconds \r"
+            echo -n -e "\r  waiting for running pod ... $count / $pod_timeout seconds ..."
             sleep 3
             count=$( expr $count + 5 )
             if [ $count -gt ${pod_timeout} ]; then
@@ -702,7 +719,7 @@ function f-kube-run-v() {
         fi
     fi
 
-    if [ ! -z "$carry_on_kubeconfig" ]; then
+    if [ x"$carry_on_kubeconfig"x = x"yes"x ]; then
         /bin/rm -f $carry_on_kubeconfig_file
     fi
 
