@@ -93,7 +93,8 @@ bash kube-run-v.sh --image debian:9
 
 kube-run-v.sh requires bash --login, bash, tar command in the docker image.
 
-SECURITY WARNING: kube-run-v.sh creates the serviceaccount that has cluster-admin.
+SECURITY WARNING: kube-run-v.sh creates the serviceaccount and gives him cluster-admin role, 
+then run a pod with the serviceacount.
 
 
 ### tips run kubectl in kubernetes pod
