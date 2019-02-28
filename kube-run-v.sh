@@ -92,6 +92,34 @@ function f-rsync-escape-relative() {
 }
 
 #
+# ../*-recover.sh ファイルがあれば実行する
+#
+function f-check-and-run-recover-sh() {
+    local i
+    local ans
+    for i in ../*-recover.sh
+    do
+        if [ -f "$i" ]; then
+            while true
+            do
+                echo    "  warning. found $i file.  run $i and remove it before run kube-run-v."
+                echo -n "  do you want to run $i ? [y/n] : "
+                read ans
+                if [ x"$ans"x = x"y"x  -o  x"$ans"x = x"yes"x ]; then
+                    bash -x "$i"
+                    /bin/rm -f "$i"
+                    break
+                fi
+                if [ x"$ans"x = x"n"x  -o  x"$ans"x = x"no"x ]; then
+                    /bin/rm -f "$i"
+                    break
+                fi
+            done
+        fi
+    done
+}
+
+#
 # 自作イメージを起動して、カレントディレクトリのファイル内容をPod内部に持ち込む
 #   for kubernetes  ( Linux Bash or Git-Bash for Windows MSYS2 )
 #
@@ -143,6 +171,9 @@ function f-kube-run-v() {
     # check kubectl version
     kubectl version > /dev/null
     RC=$? ; if [ $RC -ne 0 ]; then echo "kubectl version error. abort." ; return $RC; fi
+
+    # check ../*-recover.sh
+    f-check-and-run-recover-sh
 
     local namespace=
     local kubectl_cmd_namespace_opt=
