@@ -67,12 +67,12 @@ kube-run-mycentos7docker -n default
 
 ### run via kube-run-v.sh
 
-* https://raw.githubusercontent.com/george-pon/mycentos7docker/master/kube-run-v.sh
+* https://raw.githubusercontent.com/george-pon/mycentos7docker/master/bin/kube-run-v.sh
 
 ```
 mkdir -p /home/george/podwork
 cd /home/george/podwork
-curl -LO https://raw.githubusercontent.com/george-pon/mycentos7docker/master/kube-run-v.sh
+curl -LO https://raw.githubusercontent.com/george-pon/mycentos7docker/master/bin/kube-run-v.sh
 bash kube-run-v.sh --image-centos
 ```
 
@@ -87,7 +87,7 @@ kube-run-v.sh creates archive file in the pod, copy it form the pod (by kubectl 
 kube-run-v.sh can also use official docker image or your own docker image with option "--image centos:7" or "--image debian:9" .
 
 ```
-curl -LO https://raw.githubusercontent.com/george-pon/mycentos7docker/master/kube-run-v.sh
+curl -LO https://raw.githubusercontent.com/george-pon/mycentos7docker/master/bin/kube-run-v.sh
 bash kube-run-v.sh --image debian:9
 ```
 

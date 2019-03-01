@@ -172,9 +172,6 @@ function f-kube-run-v() {
     kubectl version > /dev/null
     RC=$? ; if [ $RC -ne 0 ]; then echo "kubectl version error. abort." ; return $RC; fi
 
-    # check ../*-recover.sh
-    f-check-and-run-recover-sh
-
     local namespace=
     local kubectl_cmd_namespace_opt=
     local interactive=
@@ -250,10 +247,8 @@ function f-kube-run-v() {
             local env_val=${env_key_val#*=}
             if [ -z "$env_opts" ]; then
                 env_opts="--env $env_key=$env_val"
-                echo "  env_opts : $env_opts"
             else
                 env_opts="$env_opts --env $env_key=$env_val"
-                echo "  env_opts : $env_opts"
             fi
             shift
             shift
@@ -412,6 +407,11 @@ function f-kube-run-v() {
     fi
     if [ ! -z "$docker_pull" ]; then
         $DOCKER_SUDO_CMD docker pull $image
+    fi
+
+    # check ../*-recover.sh file when volume carry out is true
+    if [ x"$volume_carry_out"x = x"true"x ]; then
+        f-check-and-run-recover-sh
     fi
 
     # carry_on_kubeconfig
@@ -657,6 +657,9 @@ function f-kube-run-v() {
                 echo "fi" >> ${TMP_ARC_FILE_RECOVER}
             done
         fi
+    fi
+    if [ x"$carry_on_kubeconfig"x = x"yes"x ]; then
+        echo "/bin/rm -f $carry_on_kubeconfig_file" >> ${TMP_ARC_FILE_RECOVER}
     fi
 
 
