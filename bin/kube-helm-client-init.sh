@@ -2,6 +2,8 @@
 #
 #  helm client 側のセットアップを行う
 #
+# 2019.03.04
+#
 
 function f-kube-helm-client-init() {
 
