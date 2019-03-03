@@ -105,7 +105,7 @@ RUN curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && 
     mv kubectx kubens /usr/local/bin
 
 # install yamlsort
-ENV YAMLSORT_VERSION v0.1.14
+ENV YAMLSORT_VERSION v0.1.15
 RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
