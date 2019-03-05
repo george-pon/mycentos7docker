@@ -200,6 +200,15 @@ function f-kube-run-v() {
     if [ ! -z "$KUBE_RUN_V_IMAGE" ]; then
         image=${KUBE_RUN_V_IMAGE}
     fi
+    if [ ! -z "$KUBE_RUN_V_ADD_HOST_1" ]; then
+        add_hosts_list="$add_hosts_list $KUBE_RUN_V_ADD_HOST_1"
+    fi
+    if [ ! -z "$KUBE_RUN_V_ADD_HOST_2" ]; then
+        add_hosts_list="$add_hosts_list $KUBE_RUN_V_ADD_HOST_2"
+    fi
+    if [ ! -z "$KUBE_RUN_V_ADD_HOST_3" ]; then
+        add_hosts_list="$add_hosts_list $KUBE_RUN_V_ADD_HOST_3"
+    fi
 
     # parse argument option
     while [ $# -gt 0 ]
@@ -372,6 +381,7 @@ function f-kube-run-v() {
             echo ""
             echo "    ENVIRONMENT VARIABLES"
             echo "        KUBE_RUN_V_IMAGE              set default image name"
+            echo "        KUBE_RUN_V_ADD_HOST_1         set host:ip for apply --add-host option"
             echo "        DOCKER_HOST                   pass to pod when kubectl run"
             echo "        http_proxy                    pass to pod when kubectl run"
             echo "        https_proxy                   pass to pod when kubectl run"
@@ -561,7 +571,7 @@ function f-kube-run-v() {
             local tmp_ip=${i##*:}
             # kubectl exec ... add /etc/hosts
             echo "  kubectl exec add $tmp_ip $tmp_host to /etc/hosts"
-            kubectl exec ${kubectl_cmd_namespace_opt} ${POD_NAME} -- bash -c " echo $tmp_ip $tmp_host > /etc/hosts "
+            kubectl exec ${kubectl_cmd_namespace_opt} ${POD_NAME} -- bash -c " echo $tmp_ip $tmp_host >> /etc/hosts "
         done
     fi
 
