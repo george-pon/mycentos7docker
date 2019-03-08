@@ -59,7 +59,7 @@ RUN curl -fSL "$DOCKERURL" -o docker.tgz \
     && chmod +x /usr/bin/docker 
 
 # install kubectl CLI
-ENV KUBECTL_CLIENT_VERSION 1.11.4-0
+ENV KUBECTL_CLIENT_VERSION 1.11.6-0
 RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "[kubernetes]" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "name=Kubernetes" >> /etc/yum.repos.d/kubernetes.repo && \
