@@ -209,6 +209,12 @@ function f-kube-run-v() {
     if [ ! -z "$KUBE_RUN_V_ADD_HOST_3" ]; then
         add_hosts_list="$add_hosts_list $KUBE_RUN_V_ADD_HOST_3"
     fi
+    if [ ! -z "$KUBE_RUN_V_ADD_HOST_4" ]; then
+        add_hosts_list="$add_hosts_list $KUBE_RUN_V_ADD_HOST_4"
+    fi
+    if [ ! -z "$KUBE_RUN_V_ADD_HOST_5" ]; then
+        add_hosts_list="$add_hosts_list $KUBE_RUN_V_ADD_HOST_5"
+    fi
 
     # parse argument option
     while [ $# -gt 0 ]
