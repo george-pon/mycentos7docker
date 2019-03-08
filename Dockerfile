@@ -78,8 +78,8 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-helm/helm-${HELM_CLIENT_V
     /bin/cp  linux-amd64/helm   /usr/bin && \
     /bin/rm -rf rm helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz linux-amd64
 
-# install kompose v1.17.0
-ENV KOMPOSE_VERSION v1.17.0
+# install kompose v1.18.0
+ENV KOMPOSE_VERSION v1.18.0
 RUN curl -LO https://github.com/kubernetes/kompose/releases/download/${KOMPOSE_VERSION}/kompose-linux-amd64.tar.gz && \
     tar xzf kompose-linux-amd64.tar.gz && \
     chmod +x kompose-linux-amd64 && \
@@ -105,7 +105,7 @@ RUN curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && 
     mv kubectx kubens /usr/local/bin
 
 # install yamlsort
-ENV YAMLSORT_VERSION v0.1.15
+ENV YAMLSORT_VERSION v0.1.16
 RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
