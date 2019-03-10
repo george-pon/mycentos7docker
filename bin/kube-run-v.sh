@@ -666,7 +666,7 @@ function f-kube-run-v() {
                 fi
 
                 # delete pod
-                echo "if kubectl ${kubectl_cmd_namespace_opt} delete pod ${POD_NAME} ; then" >> ${TMP_ARC_FILE_RECOVER}
+                echo "if kubectl ${kubectl_cmd_namespace_opt} delete pod ${POD_NAME} --grace-period 3 ; then" >> ${TMP_ARC_FILE_RECOVER}
                 echo "    echo pod delete success." >> ${TMP_ARC_FILE_RECOVER}
                 echo "else" >> ${TMP_ARC_FILE_RECOVER}
                 echo "    echo pod delete failure." >> ${TMP_ARC_FILE_RECOVER}
@@ -775,7 +775,7 @@ function f-kube-run-v() {
 
     # delete pod
     echo "  delete pod ${POD_NAME} ${kubectl_cmd_namespace_opt}"
-    kubectl delete pod ${POD_NAME} ${kubectl_cmd_namespace_opt}
+    kubectl delete pod ${POD_NAME} ${kubectl_cmd_namespace_opt} --grace-period 3
     RC=$? ; if [ $RC -ne 0 ]; then echo "kubectl delete error. abort." ; return $RC; fi
 
     # delete recover shell
