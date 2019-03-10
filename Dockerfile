@@ -104,6 +104,18 @@ RUN curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && 
     chmod +x kubectx kubens && \
     mv kubectx kubens /usr/local/bin
 
+# install kubeval ( validate Kubernetes yaml file to Kube-API )
+ENV KUBEVAL_VERSION 0.7.3
+RUN curl -LO https://github.com/garethr/kubeval/releases/download/$KUBEVAL_VERSION/kubeval-darwin-amd64.tar.gz && \
+    tar xf kubeval-darwin-amd64.tar.gz && \
+    cp kubeval /usr/local/bin
+
+# install kubetest ( lint kubernetes yaml file )
+ENV KUBETEST_VERSION 0.1.1
+RUN curl -LO https://github.com/garethr/kubetest/releases/download/$KUBETEST_VERSION/kubetest-darwin-amd64.tar.gz && \
+    tar xf kubetest-darwin-amd64.tar.gz && \
+    cp kubetest /usr/local/bin
+
 # install yamlsort
 ENV YAMLSORT_VERSION v0.1.16
 RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
