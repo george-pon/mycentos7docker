@@ -108,13 +108,15 @@ RUN curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && 
 ENV KUBEVAL_VERSION 0.7.3
 RUN curl -LO https://github.com/garethr/kubeval/releases/download/$KUBEVAL_VERSION/kubeval-linux-amd64.tar.gz && \
     tar xf kubeval-linux-amd64.tar.gz && \
-    cp kubeval /usr/local/bin
+    cp kubeval /usr/local/bin && \
+    /bin/rm kubeval-linux-amd64.tar.gz
 
 # install kubetest ( lint kubernetes yaml file )
 ENV KUBETEST_VERSION 0.1.1
 RUN curl -LO https://github.com/garethr/kubetest/releases/download/$KUBETEST_VERSION/kubetest-linux-amd64.tar.gz && \
     tar xf kubetest-linux-amd64.tar.gz && \
-    cp kubetest /usr/local/bin
+    cp kubetest /usr/local/bin && \
+    /bin/rm kubetest-linux-amd64.tar.gz
 
 # install yamlsort
 ENV YAMLSORT_VERSION v0.1.16
