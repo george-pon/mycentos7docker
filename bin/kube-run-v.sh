@@ -648,9 +648,9 @@ function f-kube-run-v() {
 
                     # rsync data copy
                     if [ -f "$pseudo_volume_left" ]; then
-                        echo "rsync -avc --delete $TMP_EXT_DIR/$( basename $pseudo_volume_right )  $( f-rsync-escape-relative $pseudo_volume_left )" >> ${TMP_ARC_FILE_RECOVER}
+                        echo "rsync -rvc --delete $TMP_EXT_DIR/$( basename $pseudo_volume_right )  $( f-rsync-escape-relative $pseudo_volume_left )" >> ${TMP_ARC_FILE_RECOVER}
                     elif [ -d "$pseudo_volume_left" ]; then
-                        echo "rsync -avc --delete $TMP_EXT_DIR/  $( f-rsync-escape-relative $pseudo_volume_left/ )" >> ${TMP_ARC_FILE_RECOVER}
+                        echo "rsync -rvc --delete $TMP_EXT_DIR/  $( f-rsync-escape-relative $pseudo_volume_left/ )" >> ${TMP_ARC_FILE_RECOVER}
                     fi
                     # remove temp dir
                     echo "/bin/rm -rf $TMP_EXT_DIR" >> ${TMP_ARC_FILE_RECOVER}
@@ -743,12 +743,12 @@ function f-kube-run-v() {
                     # rsync data copy
                     if [ -f "$pseudo_volume_left" ]; then
                         # ファイルの場合は特例。一度テンポラリで展開してmvする。
-                        echo "  rsync -avc --delete $TMP_EXT_DIR/$( basename $pseudo_volume_right )  $( f-rsync-escape-relative $pseudo_volume_left )"
-                        rsync -avc --delete $TMP_EXT_DIR/$( basename $pseudo_volume_right )  $( f-rsync-escape-relative $pseudo_volume_left )
+                        echo "  rsync -rvc --delete $TMP_EXT_DIR/$( basename $pseudo_volume_right )  $( f-rsync-escape-relative $pseudo_volume_left )"
+                        rsync -rvc --delete $TMP_EXT_DIR/$( basename $pseudo_volume_right )  $( f-rsync-escape-relative $pseudo_volume_left )
                         RC=$? ; if [ $RC -ne 0 ]; then echo "  rsync error. abort." ; return $RC; fi
                     elif [ -d "$pseudo_volume_left" ]; then
-                        echo "  rsync -avc --delete $TMP_EXT_DIR/  $( f-rsync-escape-relative $pseudo_volume_left/ ) "
-                        rsync -avc --delete $TMP_EXT_DIR/  $( f-rsync-escape-relative $pseudo_volume_left/ )
+                        echo "  rsync -rvc --delete $TMP_EXT_DIR/  $( f-rsync-escape-relative $pseudo_volume_left/ ) "
+                        rsync -rvc --delete $TMP_EXT_DIR/  $( f-rsync-escape-relative $pseudo_volume_left/ )
                         RC=$? ; if [ $RC -ne 0 ]; then echo "  rsync error. abort." ; return $RC; fi
                     fi
                     # remove temp dir
