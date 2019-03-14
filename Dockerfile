@@ -59,7 +59,7 @@ RUN curl -fSL "$DOCKERURL" -o docker.tgz \
     && chmod +x /usr/bin/docker 
 
 # install kubectl CLI
-ENV KUBECTL_CLIENT_VERSION 1.11.6-0
+# ENV KUBECTL_CLIENT_VERSION 1.11.6-0
 RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "[kubernetes]" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "name=Kubernetes" >> /etc/yum.repos.d/kubernetes.repo && \
@@ -69,7 +69,8 @@ RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "repo_gpgcheck=1" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg" >> /etc/yum.repos.d/kubernetes.repo
 RUN yes | yum search kubectl --showduplicates
-RUN yum install -y kubectl-${KUBECTL_CLIENT_VERSION} && yum clean all
+# RUN yum install -y kubectl-${KUBECTL_CLIENT_VERSION} && yum clean all
+RUN yum install -y kubectl && yum clean all
 
 # install helm CLI v2.9.1
 ENV HELM_CLIENT_VERSION v2.9.1
