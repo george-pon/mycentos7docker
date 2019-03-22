@@ -43,6 +43,7 @@ RUN yum install -y \
         vim \
         expect \
         gettext \
+        tcpdump \
         traceroute \
         tree \
         zip \
