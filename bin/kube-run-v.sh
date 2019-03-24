@@ -684,10 +684,12 @@ function f-kube-run-v() {
         # interactive mode
         echo "  base workdir name : $pseudo_workdir"
         echo "  interactive mode"
+        echo "  ${WINPTY_CMD} kubectl exec ${interactive}  ${tty}  ${kubectl_cmd_namespace_opt} ${POD_NAME}  -- bash --login"
         ${WINPTY_CMD} kubectl exec ${interactive}  ${tty}  ${kubectl_cmd_namespace_opt} ${POD_NAME}  -- bash --login
     else
         echo "  base workdir name : $pseudo_workdir"
         echo "  running command : $command_line"
+        echo "  ${WINPTY_CMD} kubectl exec                         ${kubectl_cmd_namespace_opt} ${POD_NAME}  -- bash --login -c  $command_line"
         ${WINPTY_CMD} kubectl exec                         ${kubectl_cmd_namespace_opt} ${POD_NAME}  -- bash --login -c  "$command_line"
     fi
 
