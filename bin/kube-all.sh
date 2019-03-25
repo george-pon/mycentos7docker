@@ -16,6 +16,8 @@ function f-kube-all() {
 }
 
 # if source this file, define function only ( not run )
+# echo "BASH_SOURCE count is ${#BASH_SOURCE[@]}"
+# echo "BASH_SOURCE is ${BASH_SOURCE[@]}"
 if [ ${#BASH_SOURCE[@]} = 1 ]; then
     f-kube-all "$@"
     RC=$?

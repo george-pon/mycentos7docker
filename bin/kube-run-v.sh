@@ -189,7 +189,10 @@ function f-kube-run-v() {
     local pseudo_volume_right=
     local add_hosts_list=
     local docker_pull=
-    local carry_on_kubeconfig=
+    # kubectl v 1.11 なら ~/.kube/config をpod内部に持ち込む必要があるかもしれない
+    # kubectl v 1.13.4 なら ~/.kube/config をpod内部に持ち込む必要は無い
+    # https://qiita.com/sotoiwa/items/aff12291957d85069a76 Kubernetesクラスター内のPodからkubectlを実行する - Qiita
+    local carry_on_kubeconfig=no
     local carry_on_kubeconfig_file=
     local pseudo_workdir=/$( basename $PWD )
     local pseudo_profile=
