@@ -119,6 +119,45 @@ function f-check-and-run-recover-sh() {
     done
 }
 
+# kubernetes server version文字列(1.11.6)をechoする
+function f-kubernetes-server-version() {
+    local RESULT=$( kubectl version | grep "Server Version" | sed -e 's/^.*GitVersion://g' -e 's/, GitCommit.*$//g' -e 's/"//g' -e 's/^v//g' )
+    echo $RESULT
+}
+
+# kubernetes version 文字列(1.11.6)を比較する
+# ピリオド毎に4桁の整数(000100110006)に変換してechoする
+function f-version-convert() {
+    local ARGVAL=$( echo $1 | sed -e 's/\./ /g' )
+    local i
+    local RESULT=""
+    for i in $ARGVAL
+    do
+        if [ -z "$RESULT" ]; then
+            RESULT="$(printf "%04d" $i)"
+        else
+            RESULT="${RESULT}$(printf "%04d" $i)"
+        fi
+    done
+    echo $RESULT
+}
+
+# kubernetes 1.10, 1.11ならcarry-on-kubeconfigする必要がある
+# kubernetes 1.13ならcarry-on-kubeconfigしなくて良い
+function f-check-kubeconfig-carry-on() {
+    export KUBE_SERV_VERSION=$( f-kubernetes-server-version )
+    if [ -z "$KUBE_SERV_VERSION" ]; then
+        echo "yes"
+    fi
+    local NOW_KUBE_SERV_VERSION=$( f-version-convert $KUBE_SERV_VERSION )
+    local CMP_KUBE_SERV_VERSION=$( f-version-convert "1.13.0" )
+    if [ $CMP_KUBE_SERV_VERSION -le $NOW_KUBE_SERV_VERSION ]; then
+        echo "no"
+    else
+        echo "yes"
+    fi
+}
+
 #
 # 自作イメージを起動して、カレントディレクトリのファイル内容をPod内部に持ち込む
 #   for kubernetes  ( Linux Bash or Git-Bash for Windows MSYS2 )
@@ -192,7 +231,7 @@ function f-kube-run-v() {
     # kubectl v 1.11 なら ~/.kube/config をpod内部に持ち込む必要があるかもしれない
     # kubectl v 1.13.4 なら ~/.kube/config をpod内部に持ち込む必要は無い
     # https://qiita.com/sotoiwa/items/aff12291957d85069a76 Kubernetesクラスター内のPodからkubectlを実行する - Qiita
-    local carry_on_kubeconfig=no
+    local carry_on_kubeconfig=
     local carry_on_kubeconfig_file=
     local pseudo_workdir=/$( basename $PWD )
     local pseudo_profile=
@@ -440,7 +479,7 @@ function f-kube-run-v() {
         if [ x"$kubectl_current_context"x = x"docker-for-desktop"x ]; then
             carry_on_kubeconfig=no
         else
-            carry_on_kubeconfig=yes
+            carry_on_kubeconfig=$( f-check-kubeconfig-carry-on )
         fi
     fi
     if [ x"$carry_on_kubeconfig"x = x"yes"x  ]; then
