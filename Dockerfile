@@ -33,6 +33,7 @@ RUN yum install -y \
         ansible \
         iproute \
         net-tools \
+        connect \
         nmap-ncat \
         bind-utils \
         openssh-server \
