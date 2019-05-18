@@ -28,27 +28,29 @@ RUN yum install -y epel-release && yum clean all
 
 # install tools
 RUN yum install -y \
-        jq \
-        git \
         ansible \
-        iproute \
-        net-tools \
-        connect \
-        nmap-ncat \
         bind-utils \
-        openssh-server \
-        openssh-clients \
-        make \
-        wget \
-        sudo \
-        vim \
+        connect \
         expect \
         gettext \
+        git \
+        iproute \
+        jq \
+        make \
+        mongodb \
+        net-tools \
+        nmap-ncat \
+        openssh-clients \
+        openssh-server \
+        postgresql \
+        sudo \
         tcpdump \
         traceroute \
         tree \
-        zip \
         unzip \
+        vim \
+        wget \
+        zip \
     && yum clean all
 
 # install docker client
