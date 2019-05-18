@@ -29,8 +29,10 @@ RUN yum install -y epel-release && yum clean all
 # install tools
 RUN yum install -y \
         ansible \
+        bash-completion \
         bind-utils \
         connect \
+        curl \
         expect \
         gettext \
         git \
