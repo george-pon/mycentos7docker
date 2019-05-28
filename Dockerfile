@@ -38,6 +38,7 @@ RUN yum install -y \
         git \
         iproute \
         jq \
+        lsof \
         make \
         mongodb \
         net-tools \
