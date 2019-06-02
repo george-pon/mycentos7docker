@@ -1,7 +1,7 @@
 # mycentos7docker
 
 This image is my convinient environment on CentOS 7
-includes man pages, iproute, bind-utils, jq, ansible, git, kubectl CLI, docker CLI, helm, kustomize, envsubst
+includes man pages, iproute, bind-utils, jq, ansible, git, nc, kubectl CLI, docker CLI, helm, kustomize, envsubst
 
 ## how to use
 

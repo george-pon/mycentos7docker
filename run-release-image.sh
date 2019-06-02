@@ -2,10 +2,10 @@
 #
 # test run image
 #
-function docker-run-mycentos7docker() {
-    docker pull georgesan/mycentos7docker:latest
+function docker-run-myalpine3docker() {
+    docker pull georgesan/myalpine3docker:latest
     ${WINPTY_CMD} docker run -i -t --rm \
         -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} -e no_proxy="${no_proxy}" \
-        georgesan/mycentos7docker:latest
+        registry.gitlab.com/george-pon/myalpine3docker:latest
 }
-docker-run-mycentos7docker
+docker-run-myalpine3docker
