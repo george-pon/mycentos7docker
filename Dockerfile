@@ -153,8 +153,8 @@ ENV ENV $HOME/.bashrc
 RUN groupadd -g 1000 centos && \
     useradd  -g      centos -G wheel -m -s /bin/bash centos && \
     echo 'centos:hogehoge' | chpasswd && \
-RUN echo 'Defaults visiblepw'            >> /etc/sudoers && \
-RUN echo 'centos ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+    echo 'Defaults visiblepw'            >> /etc/sudoers && \
+    echo 'centos ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # use normal user centos
 # USER centos
