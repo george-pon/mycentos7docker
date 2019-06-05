@@ -81,14 +81,14 @@ RUN yum install -y kubectl && yum clean all
 
 # install helm CLI v2.9.1
 ENV HELM_CLIENT_VERSION v2.9.1
-RUN curl -LO https://storage.googleapis.com/kubernetes-helm/helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz && \
+RUN curl -fLO https://storage.googleapis.com/kubernetes-helm/helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz && \
     tar xzf  helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz && \
     /bin/cp  linux-amd64/helm   /usr/bin && \
     /bin/rm -rf rm helm-${HELM_CLIENT_VERSION}-linux-amd64.tar.gz linux-amd64
 
 # install kompose v1.18.0
 ENV KOMPOSE_VERSION v1.18.0
-RUN curl -LO https://github.com/kubernetes/kompose/releases/download/${KOMPOSE_VERSION}/kompose-linux-amd64.tar.gz && \
+RUN curl -fLO https://github.com/kubernetes/kompose/releases/download/${KOMPOSE_VERSION}/kompose-linux-amd64.tar.gz && \
     tar xzf kompose-linux-amd64.tar.gz && \
     chmod +x kompose-linux-amd64 && \
     mv kompose-linux-amd64 /usr/bin/kompose && \
@@ -96,39 +96,39 @@ RUN curl -LO https://github.com/kubernetes/kompose/releases/download/${KOMPOSE_V
 
 # install stern
 ENV STERN_VERSION 1.10.0
-RUN curl -LO https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64 && \
+RUN curl -fLO https://github.com/wercker/stern/releases/download/${STERN_VERSION}/stern_linux_amd64 && \
     chmod +x stern_linux_amd64 && \
     mv stern_linux_amd64 /usr/bin/stern
 
 # install kustomize
 ENV KUSTOMIZE_VERSION 1.0.11
-RUN curl -LO https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
+RUN curl -fLO https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
     chmod +x kustomize_${KUSTOMIZE_VERSION}_linux_amd64 && \
     mv kustomize_${KUSTOMIZE_VERSION}_linux_amd64 /usr/bin/kustomize
 
 # install kubectx, kubens. see https://github.com/ahmetb/kubectx
-RUN curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && \
-    curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens && \
+RUN curl -fLO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && \
+    curl -fLO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens && \
     chmod +x kubectx kubens && \
     mv kubectx kubens /usr/local/bin
 
 # install kubeval ( validate Kubernetes yaml file to Kube-API )
 ENV KUBEVAL_VERSION 0.7.3
-RUN curl -LO https://github.com/garethr/kubeval/releases/download/$KUBEVAL_VERSION/kubeval-linux-amd64.tar.gz && \
+RUN curl -fLO https://github.com/garethr/kubeval/releases/download/$KUBEVAL_VERSION/kubeval-linux-amd64.tar.gz && \
     tar xf kubeval-linux-amd64.tar.gz && \
     cp kubeval /usr/local/bin && \
     /bin/rm kubeval-linux-amd64.tar.gz
 
 # install kubetest ( lint kubernetes yaml file )
 ENV KUBETEST_VERSION 0.1.1
-RUN curl -LO https://github.com/garethr/kubetest/releases/download/$KUBETEST_VERSION/kubetest-linux-amd64.tar.gz && \
+RUN curl -fLO https://github.com/garethr/kubetest/releases/download/$KUBETEST_VERSION/kubetest-linux-amd64.tar.gz && \
     tar xf kubetest-linux-amd64.tar.gz && \
     cp kubetest /usr/local/bin && \
     /bin/rm kubetest-linux-amd64.tar.gz
 
 # install yamlsort
 ENV YAMLSORT_VERSION v0.1.16
-RUN curl -LO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
+RUN curl -fLO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
     mv linux_amd64_yamlsort /usr/bin/yamlsort && \
@@ -145,6 +145,19 @@ RUN chmod +x /usr/local/bin/*.sh
 
 ENV HOME /root
 ENV ENV $HOME/.bashrc
+
+# add sudo user
+# https://qiita.com/iganari/items/1d590e358a029a1776d6 Dockerコンテナ内にsudoユーザを追加する - Qiita
+# ユーザー名 centos
+# パスワード hogehoge
+RUN groupadd -g 1000 centos && \
+    useradd  -g      centos -G wheel -m -s /bin/bash centos && \
+    echo 'centos:hogehoge' | chpasswd
+RUN echo 'Defaults visiblepw'            >> /etc/sudoers
+RUN echo 'centos ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# use normal user centos
+# USER centos
 
 CMD ["/usr/local/bin/docker-entrypoint.sh"]
 
