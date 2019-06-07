@@ -46,6 +46,7 @@ RUN yum install -y \
         openssh-clients \
         openssh-server \
         postgresql \
+        stress \
         sudo \
         tcpdump \
         traceroute \
