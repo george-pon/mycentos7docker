@@ -46,6 +46,7 @@ RUN yum install -y \
         openssh-clients \
         openssh-server \
         postgresql \
+        python-pip \
         stress \
         sudo \
         tcpdump \
@@ -56,6 +57,9 @@ RUN yum install -y \
         wget \
         zip \
     && yum clean all
+
+# upgrade pip
+RUN pip install --upgrade pip
 
 # install docker client
 ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
