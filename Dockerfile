@@ -54,6 +54,7 @@ RUN yum install -y \
         tree \
         unzip \
         vim \
+        w3m \
         wget \
         zip \
     && yum clean all
