@@ -32,6 +32,7 @@ RUN yum install -y \
         bash-completion \
         bind-utils \
         connect \
+        connect-proxy \
         curl \
         expect \
         gettext \
