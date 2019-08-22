@@ -34,6 +34,7 @@ RUN yum install -y \
         connect \
         connect-proxy \
         curl \
+        emacs-nox \
         expect \
         gettext \
         git \
