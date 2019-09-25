@@ -64,6 +64,16 @@ RUN yum install -y \
 # upgrade pip
 RUN pip install --upgrade pip
 
+# install azure cli command
+RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
+    echo "[azure-cli]"    > /etc/yum.repos.d/azure-cli.repo  && \
+    echo "name=Azure CLI" >> /etc/yum.repos.d/azure-cli.repo  && \
+    echo "baseurl=https://packages.microsoft.com/yumrepos/azure-cli" >> /etc/yum.repos.d/azure-cli.repo  && \
+    echo "enabled=1" >> /etc/yum.repos.d/azure-cli.repo  && \
+    echo "gpgcheck=1" >> /etc/yum.repos.d/azure-cli.repo  && \
+    echo "gpgkey=https://packages.microsoft.com/keys/microsoft.asc" >> /etc/yum.repos.d/azure-cli.repo  && \
+    yum install -y azure-cli  && yum clean all
+
 # install docker client
 ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
 RUN curl -fSL "$DOCKERURL" -o docker.tgz \
@@ -74,7 +84,6 @@ RUN curl -fSL "$DOCKERURL" -o docker.tgz \
     && chmod +x /usr/bin/docker 
 
 # install kubectl CLI
-# ENV KUBECTL_CLIENT_VERSION 1.11.6-0
 RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "[kubernetes]" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "name=Kubernetes" >> /etc/yum.repos.d/kubernetes.repo && \
@@ -83,7 +92,7 @@ RUN echo "" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "gpgcheck=1" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "repo_gpgcheck=1" >> /etc/yum.repos.d/kubernetes.repo && \
     echo "gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg" >> /etc/yum.repos.d/kubernetes.repo
-RUN yes | yum search kubectl --showduplicates
+# RUN yes | yum search kubectl --showduplicates
 # RUN yum install -y kubectl-${KUBECTL_CLIENT_VERSION} && yum clean all
 RUN yum install -y kubectl && yum clean all
 
