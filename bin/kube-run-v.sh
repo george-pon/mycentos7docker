@@ -45,6 +45,17 @@ function f-msys-escape() {
     local args="$@"
     export MSYS_FLAG=
 
+    # check cygwin
+    if type uname 2>/dev/null 1>/dev/null ; then
+        local result=$( uname -o )
+        if [ x"$result"x = x"Cygwin"x ]; then
+            FSYS_FLAG=
+            # if not MSYS, normal return
+            echo "$@"
+            return 0
+        fi
+    fi
+
     # check cmd is found
     if type cmd 2>/dev/null 1>/dev/null ; then
         # check msys convert
@@ -358,11 +369,11 @@ function f-kube-run-v() {
             local env_key=${env_key_val%%=*}
             local env_val=${env_key_val#*=}
             if [ -z "$env_opts" ]; then
-                env_opts="--env $env_key=$env_val"
-                env_json=' , { "name":  "'$env_key'" , "value": "'$env_val'" } '
+                env_opts="--env $env_key=$( f-msys-escape $env_val) "
+                env_json=' , { "name":  "'$env_key'" , "value": "'$( f-msys-escape $env_val)'" } '
             else
-                env_opts="$env_opts --env $env_key=$env_val"
-                env_json="$env_json"' , {  "name" : "'$env_key'" , "value" : "'$env_val'" } '
+                env_opts="$env_opts --env $env_key=$( f-msys-escape $env_val ) "
+                env_json="$env_json"' , {  "name" : "'$env_key'" , "value" : "'$( f-msys-escape $env_val )'" } '
             fi
             shift
             shift
