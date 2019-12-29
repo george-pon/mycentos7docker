@@ -156,6 +156,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ADD bashrc /root/.bashrc
 ADD bash_profile /root/.bash_profile
+ADD emacsrc /root/.emacs
 ADD vimrc /root/.vimrc
 ADD bin /usr/local/bin
 RUN chmod +x /usr/local/bin/*.sh
