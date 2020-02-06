@@ -68,6 +68,9 @@ RUN pip install --upgrade pip
 RUN curl -sL https://rpm.nodesource.com/setup_13.x | bash -
 RUN yum install -y nodejs && npm update -g
 
+# install @vue/cli
+RUN npm install -g @vue/cli
+
 # install azure cli command
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
     echo "[azure-cli]"    > /etc/yum.repos.d/azure-cli.repo  && \
