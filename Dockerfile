@@ -68,9 +68,6 @@ RUN pip install --upgrade pip
 RUN curl -sL https://rpm.nodesource.com/setup_13.x | bash -
 RUN yum install -y nodejs && npm update -g
 
-# install @vue/cli
-# RUN npm install -g @vue/cli
-
 # install azure cli command
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
     echo "[azure-cli]"    > /etc/yum.repos.d/azure-cli.repo  && \
@@ -81,8 +78,8 @@ RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
     echo "gpgkey=https://packages.microsoft.com/keys/microsoft.asc" >> /etc/yum.repos.d/azure-cli.repo  && \
     yum install -y azure-cli  && yum clean all
 
-# install docker client
-ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz
+# install docker client see https://download.docker.com/linux/static/stable/x86_64/
+ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-19.03.6-ce.tgz
 RUN curl -fSL "$DOCKERURL" -o docker.tgz \
     && tar -xzvf docker.tgz \
     && mv docker/* /usr/bin/ \
@@ -150,8 +147,8 @@ RUN curl -fLO https://github.com/garethr/kubetest/releases/download/$KUBETEST_VE
     cp kubetest /usr/local/bin && \
     /bin/rm kubetest-linux-amd64.tar.gz
 
-# install yamlsort
-ENV YAMLSORT_VERSION v0.1.16
+# install yamlsort see https://github.com/george-pon/yamlsort
+ENV YAMLSORT_VERSION v0.1.19
 RUN curl -fLO https://github.com/george-pon/yamlsort/releases/download/${YAMLSORT_VERSION}/linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     tar xzf linux_amd64_yamlsort_${YAMLSORT_VERSION}.tar.gz && \
     chmod +x linux_amd64_yamlsort && \
