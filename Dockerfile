@@ -79,7 +79,7 @@ RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
     yum install -y azure-cli  && yum clean all
 
 # install docker client see https://download.docker.com/linux/static/stable/x86_64/
-ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-19.03.6-ce.tgz
+ARG DOCKERURL=https://download.docker.com/linux/static/stable/x86_64/docker-19.03.6.tgz
 RUN curl -fSL "$DOCKERURL" -o docker.tgz \
     && tar -xzvf docker.tgz \
     && mv docker/* /usr/bin/ \
