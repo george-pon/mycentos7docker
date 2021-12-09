@@ -7,6 +7,7 @@
 # 全namespaceで何か操作する
 #
 function f-kube-get-all-resources() {
+    KUBE_GET_DEFAULT_OPT=" -A "
     # kubectl get "$@" $(kubectl api-resources --namespaced=true --verbs=list -o name | tr '\n' ',' | sed -e 's%,$%%g')
     API_RESOURCES=$(kubectl api-resources --namespaced=true --verbs=list -o name)
     for i in ${API_RESOURCES}
@@ -15,8 +16,12 @@ function f-kube-get-all-resources() {
         if [ -z "$IS_RESOURCE" ] ; then
             echo ""
             echo ""
-            echo "### kubectl get "$@" $i"
-            kubectl get "$@" $i
+            echo "### kubectl get $KUBE_GET_DEFAULT_OPT "$@" $i"
+            kubectl get $KUBE_GET_DEFAULT_OPT "$@" $i
+            echo ""
+            echo ""
+        else
+            echo "No resources found in $i"
         fi
     done
 }
