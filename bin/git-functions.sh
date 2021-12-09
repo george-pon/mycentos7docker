@@ -453,11 +453,43 @@ function git-branch-cherry-pick() {
 # とイライラしたら下記。
 #
 function git-branch-force-master-pull() {
-    f-git checkout master
+    f_git checkout master
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-    f-git fetch origin
+    f_git fetch origin
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-    f-git reset --hard origin/master
+    f_git reset --hard origin/master
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 }
 
+#
+# git stash 系のコマンド
+#
+
+# workspace上の未コミットファイルを一時的に退避する
+function git-stash-save-u() {
+    f_git stash save -u "$@"
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+}
+
+# stashの一覧
+function git-stash-list() {
+    f_git stash list
+}
+
+# stashから戻す
+function git-stash-apply() {
+    if [ $# -eq 0 ] ; then
+        echo "ex: git-stash-apply 0"
+        return 0
+    fi
+    f_git stash apply "stash@{$1}"
+}
+
+# stashを消す
+function git-stash-drop() {
+    if [ $# -eq 0 ] ; then
+        echo "ex: git-stash-drop 0"
+        return 0
+    fi
+    f_git stash drop "stash@{$1}"
+}
