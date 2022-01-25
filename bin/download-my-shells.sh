@@ -10,6 +10,7 @@ for i in \
     kube-all-namespaces.sh  kube-get-all-resources.sh \
     kube-all-check.sh  docker-clean.sh  \
     kubectl-get-event-sort.sh \
+    kubectl-logs-regex.sh \
     download-my-shells.sh  \
     kube-helm-client-init.sh  \
     kube-helm-tools-setup.sh  \
