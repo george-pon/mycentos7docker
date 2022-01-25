@@ -437,6 +437,11 @@ function f-docker-run-v() {
             shift
             continue
         fi
+        if [ x"$1"x = x"--image-oraclelinux8"x ]; then
+            image=docker.io/georgesan/myoraclelinux8docker:latest
+            shift
+            continue
+        fi
         if [ x"$1"x = x"--docker-pull"x -o x"$1"x = x"--pull"x ]; then
             docker_pull=yes
             shift
@@ -499,6 +504,7 @@ function f-docker-run-v() {
             echo "        --image-node                  set image to registry.gitlab.com/george-pon/mynode:latest"
             echo "        --image-node13                set image to registry.gitlab.com/george-pon/mynode:13"
             echo "        --image-node12                set image to registry.gitlab.com/george-pon/mynode:12"
+            echo "        --image-oraclelinux8          set image to docker.io/georgesan/myoraclelinux8docker:latest"
             echo "        --docker-pull                 docker pull image before docker run"
             echo "        --pull                        docker pull image before docker run"
             echo "        --timeout value               timeout value wait for running contaner"

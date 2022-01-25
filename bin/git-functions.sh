@@ -42,7 +42,14 @@ function git-lola() {
 }
 
 function git-branch-a() {
+    echo "ブランチ一覧"
     f_git branch -a
+}
+
+function git-branch-vv() {
+    echo "ブランチが追跡しているorigin一覧"
+    echo "追跡するリモートブランチを設定する場合は git branch --set-upstream-to=origin/[ブランチ名]"
+    f_git branch -vv
 }
 
 # よくあるgitの初期化を実施する
@@ -57,9 +64,6 @@ function git-initialize() {
     # 改行コードの自動変換の無効化。
     git config --global core.autocrlf false
 
-    # push を upstreamに限定する
-    git config --global push.default upstream
-
     # ページャーは使用しない
     # git config --global core.pager ''
 
@@ -69,17 +73,26 @@ function git-initialize() {
     # gitの認証情報を保存する
     git config --global credential.helper store
 
-    # git ver 2.0 以降では simple がデフォルト
+    # push を upstreamが設定されているものに限定する
+    # git config --global push.default upstream
+
+    # git ver 2.0 以降では simple がデフォルト。upstreamが設定されていて、かつ、ローカルとリモートで名前が同じブランチのみpushする。
     git config --global push.default simple
 
+    # git pull した時の戦略。マージする。(rebaseはしない)
+    git config --global pull.rebase false
+    
+    # ファイル名の大文字小文字の変動を追尾する
+    git config --global core.ignorecase false
+
     # 各リポジトリの中で実施するコマンド
-    if [ -d .git ] ; then
+    #if [ -d .git ] ; then
         # git pull した時の戦略。マージする。(rebaseはしない)(各gitリポジトリ内で実施)
-        git config pull.rebase false
+        # git config pull.rebase false
 
         # ファイル名の大文字小文字の変動を追尾する
         # git config core.ignorecase false
-    fi
+    #fi
 
 }
 
@@ -120,20 +133,26 @@ function git-branch-clean-all() {
         BR_LIST=`git branch | sed 's/^\*/ /g'`
         # リモートブランチ一覧取得
         BR_LIST_2=$( git branch -a | sed 's/^\*/ /g' | grep remotes/origin )
-        # リモートブランチにdevelopがない場合は、デフォルトブランチ名はmasterとする
-        BR_LIST_3=$( echo $BR_LIST_2 | grep develop )
-        if [ -z "$BR_LIST_3" ]; then
+        # リモートブランチにdevelopがある場合は、developを採用。次に master, main を検索していく。
+        if [ -n "$( echo $BR_LIST_2 | grep develop )" ]; then
+            GIT_DEFAULT_BRANCH_NAME=develop
+        elif [ -n "$( echo $BR_LIST_2 | grep master )" ]; then
             GIT_DEFAULT_BRANCH_NAME=master
+        elif [ -n "$( echo $BR_LIST_2 | grep main )" ]; then
+            GIT_DEFAULT_BRANCH_NAME=main
+        else
+            echo "can not determine default remote branch name. abort."
+            return 1
         fi
         echo "GIT_DEFAULT_BRANCH_NAME is $GIT_DEFAULT_BRANCH_NAME"
-        # カレントブランチがdirtyではなく、developまたはmasterの場合は、git pullを行う
+        # カレントブランチがdirtyではなく、developまたはmasterまたはmainの場合は、git pullを行う
         STATUS=$( git status | grep "nothing to commit" )
         if [ ! -z "$STATUS" ]; then
             if [ x"$CUR_BRANCH"x = x"master"x -o x"$CUR_BRANCH"x = x"develop"x -o x"$CUR_BRANCH"x = x"main"x ]; then
                 f_git pull
                 RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
             else
-                echo "workspace is not master, develop, main branch.  skip git pull."
+                echo "workspace is not master nor develop nor main branch.  skip git pull."
             fi
         else
             echo "workspace is durty.  skip git pull."
@@ -376,6 +395,39 @@ function git-branch-merge-master() {
 
 }
 
+# developからmainにマージする
+function git-branch-merge-main() {
+
+    # pullする
+    f_git pull
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+    # mainをチェックアウトする
+    f_git checkout main
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+    # pullする
+    f_git pull
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+    # developをマージする
+    f_git merge develop
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+    # commitする
+    #f_git commit -m "merge from develop"
+    #RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+    # pushする
+    f_git push
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+    # developをチェックアウトする
+    f_git checkout develop
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+}
+
 # コミットしてpushする
 function git-branch-add() {
     local COMMIT_COMMENT=
@@ -458,6 +510,15 @@ function git-branch-force-master-pull() {
     f_git fetch origin
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
     f_git reset --hard origin/master
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+}
+
+function git-branch-force-main-pull() {
+    f_git checkout main
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+    f_git fetch origin
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+    f_git reset --hard origin/main
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 }
 
