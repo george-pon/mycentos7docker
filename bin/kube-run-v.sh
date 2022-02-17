@@ -319,7 +319,7 @@ function f-kube-run-v() {
     local interactive=
     local tty=
     local i_or_tty=
-    local image=registry.gitlab.com/george-pon/mydebian10docker:latest
+    local image=registry.gitlab.com/george-pon/mydebian11docker:latest
     local pod_name_prefix=
     local pod_timeout=600
     local imagePullOpt=
@@ -542,7 +542,7 @@ function f-kube-run-v() {
             continue
         fi
         if [ x"$1"x = x"--image-debian"x ]; then
-            image=registry.gitlab.com/george-pon/mydebian10docker:latest
+            image=registry.gitlab.com/george-pon/mydebian11docker:latest
             shift
             continue
         fi
@@ -556,8 +556,8 @@ function f-kube-run-v() {
             shift
             continue
         fi
-        if [ x"$1"x = x"--image-debian-builder"x ]; then
-            image=registry.gitlab.com/george-pon/mydebian10builder:latest
+        if [ x"$1"x = x"--image-debian11"x ]; then
+            image=registry.gitlab.com/george-pon/mydebian11docker:latest
             shift
             continue
         fi
@@ -578,26 +578,6 @@ function f-kube-run-v() {
         fi
         if [ x"$1"x = x"--image-alpine"x ]; then
             image=registry.gitlab.com/george-pon/myalpine3docker:latest
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-raspi4"x ]; then
-            image=registry.gitlab.com/george-pon/raspi4debian10:latest
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-node"x ]; then
-            image=registry.gitlab.com/george-pon/mynode:latest
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-node12"x ]; then
-            image=registry.gitlab.com/george-pon/mynode:12
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-node13"x ]; then
-            image=registry.gitlab.com/george-pon/mynode:13
             shift
             continue
         fi
@@ -717,12 +697,8 @@ function f-kube-run-v() {
             echo "        --image  image-name           set kubectl run image name. default is $image "
             echo "        --image-centos                set image to georgesan/mycentos7docker:latest"
             echo "        --image-ubuntu                set image to georgesan/myubuntu1804docker:latest"
-            echo "        --image-debian                set image to registry.gitlab.com/george-pon/mydebian10docker:latest  (default)"
+            echo "        --image-debian                set image to registry.gitlab.com/george-pon/mydebian11docker:latest  (default)"
             echo "        --image-alpine                set image to registry.gitlab.com/george-pon/myalpine3docker:latest"
-            echo "        --image-raspi4                set image to registry.gitlab.com/george-pon/raspi4debian10:latest"
-            echo "        --image-node                  set image to registry.gitlab.com/george-pon/mynode:latest"
-            echo "        --image-node12                set image to registry.gitlab.com/george-pon/mynode:12"
-            echo "        --image-node13                set image to registry.gitlab.com/george-pon/mynode:13"
             echo "        --carry-on-kubeconfig         carry on kubeconfig file into pod"
             echo "        --docker-pull                 docker pull image before kubectl run"
             echo "        --pull                        always pull image"

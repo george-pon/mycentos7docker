@@ -192,7 +192,7 @@ function f-docker-run-v() {
     local interactive=
     local tty=
     local i_or_tty=
-    local image=registry.gitlab.com/george-pon/mydebian10docker:latest
+    local image=registry.gitlab.com/george-pon/mydebian11docker:latest
     local container_name_prefix=
     local container_timeout=600
     local command_line=
@@ -378,7 +378,7 @@ function f-docker-run-v() {
             continue
         fi
         if [ x"$1"x = x"--image-debian"x ]; then
-            image=registry.gitlab.com/george-pon/mydebian10docker:latest
+            image=registry.gitlab.com/george-pon/mydebian11docker:latest
             shift
             continue
         fi
@@ -392,8 +392,8 @@ function f-docker-run-v() {
             shift
             continue
         fi
-        if [ x"$1"x = x"--image-debian-builder"x ]; then
-            image=registry.gitlab.com/george-pon/mydebian10builder:latest
+        if [ x"$1"x = x"--image-debian11"x ]; then
+            image=registry.gitlab.com/george-pon/mydebian11docker:latest
             shift
             continue
         fi
@@ -414,26 +414,6 @@ function f-docker-run-v() {
         fi
         if [ x"$1"x = x"--image-alpine"x ]; then
             image=registry.gitlab.com/george-pon/myalpine3docker:latest
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-raspi4"x ]; then
-            image=registry.gitlab.com/george-pon/raspi4debian10:latest
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-node"x ]; then
-            image=registry.gitlab.com/george-pon/mynode:latest
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-node12"x ]; then
-            image=registry.gitlab.com/george-pon/mynode:12
-            shift
-            continue
-        fi
-        if [ x"$1"x = x"--image-node13"x ]; then
-            image=registry.gitlab.com/george-pon/mynode:13
             shift
             continue
         fi
@@ -497,13 +477,8 @@ function f-docker-run-v() {
             echo "        --image  image-name           set docker run image name. default is $image "
             echo "        --image-centos                set image to georgesan/mycentos7docker:latest"
             echo "        --image-ubuntu                set image to georgesan/myubuntu2004docker:latest"
-            echo "        --image-debian                set image to registry.gitlab.com/george-pon/mydebian10docker:latest (default)"
-            echo "        --image-debian-builder        set image to registry.gitlab.com/george-pon/mydebian10builder:latest"
+            echo "        --image-debian                set image to registry.gitlab.com/george-pon/mydebian11docker:latest (default)"
             echo "        --image-alpine                set image to registry.gitlab.com/george-pon/myalpine3docker:latest"
-            echo "        --image-raspi4                set image to registry.gitlab.com/george-pon/raspi4debian10:latest"
-            echo "        --image-node                  set image to registry.gitlab.com/george-pon/mynode:latest"
-            echo "        --image-node13                set image to registry.gitlab.com/george-pon/mynode:13"
-            echo "        --image-node12                set image to registry.gitlab.com/george-pon/mynode:12"
             echo "        --image-oraclelinux8          set image to docker.io/georgesan/myoraclelinux8docker:latest"
             echo "        --docker-pull                 docker pull image before docker run"
             echo "        --pull                        docker pull image before docker run"
