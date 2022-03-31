@@ -581,6 +581,16 @@ function f-kube-run-v() {
             shift
             continue
         fi
+        if [ x"$1"x = x"--image-oraclelinux8"x ]; then
+            image=docker.io/georgesan/myoraclelinux8docker:latest
+            shift
+            continue
+        fi
+        if [ x"$1"x = x"--image-oraclelinux7"x ]; then
+            image=docker.io/georgesan/myoraclelinux7docker:latest
+            shift
+            continue
+        fi
         if [ x"$1"x = x"--docker-pull"x ]; then
             docker_pull=yes
             shift
@@ -699,6 +709,8 @@ function f-kube-run-v() {
             echo "        --image-ubuntu                set image to georgesan/myubuntu1804docker:latest"
             echo "        --image-debian                set image to registry.gitlab.com/george-pon/mydebian11docker:latest  (default)"
             echo "        --image-alpine                set image to registry.gitlab.com/george-pon/myalpine3docker:latest"
+            echo "        --image-oraclelinux8          set image to docker.io/georgesan/myoraclelinux8docker:latest"
+            echo "        --image-oraclelinux7          set image to docker.io/georgesan/myoraclelinux7docker:latest"
             echo "        --carry-on-kubeconfig         carry on kubeconfig file into pod"
             echo "        --docker-pull                 docker pull image before kubectl run"
             echo "        --pull                        always pull image"

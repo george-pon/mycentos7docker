@@ -194,7 +194,7 @@ function git-branch-new() {
     # 新しいブランチを作成する
     # git-branch-new  branch-name
     #
-    # 新しいブランチを作成する。 obama-jyun/#20180417_163658_subbranchname というブランチ名をつける。 
+    # 新しいブランチを作成する。 gitユーザー名/#20180417_163658_subbranchname というブランチ名をつける。 
     # git-branch-new  -n  subbranchname
     #
     # 新しいブランチを作成して git add . ; git commit ; git push を一気に行う
@@ -435,7 +435,7 @@ function git-branch-add() {
 
     # 引数解析
     if [ $# -eq 0 ]; then
-        echo "git-branch-add   [] -m commit-comment ]   [ -t tag ]"
+        echo "git-branch-add  [-m commit-comment ]  [ -t tag ]"
     fi
     # 引数解析
     while true
