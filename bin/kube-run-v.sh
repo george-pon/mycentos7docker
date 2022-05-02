@@ -562,17 +562,17 @@ function f-kube-run-v() {
             continue
         fi
         if [ x"$1"x = x"--image-ubuntu"x ]; then
-            image=georgesan/myubuntu1804docker:latest
+            image=docker.io/georgesan/myubuntu2004docker:latest
             shift
             continue
         fi
         if [ x"$1"x = x"--image-ubuntu1804"x ]; then
-            image=georgesan/myubuntu1804docker:latest
+            image=docker.io/georgesan/myubuntu1804docker:latest
             shift
             continue
         fi
         if [ x"$1"x = x"--image-ubuntu2004"x ]; then
-            image=georgesan/myubuntu2004docker:latest
+            image=docker.io/georgesan/myubuntu2004docker:latest
             shift
             continue
         fi
@@ -705,8 +705,8 @@ function f-kube-run-v() {
             echo "    -n, --namespace  namespace        set kubectl run namespace"
             echo "        --command                     after this option , arguments pass to kubectl exec command line"
             echo "        --image  image-name           set kubectl run image name. default is $image "
-            echo "        --image-centos                set image to georgesan/mycentos7docker:latest"
-            echo "        --image-ubuntu                set image to georgesan/myubuntu1804docker:latest"
+            echo "        --image-centos                set image to docker.io/georgesan/mycentos7docker:latest"
+            echo "        --image-ubuntu                set image to docker.io/georgesan/myubuntu2004docker:latest"
             echo "        --image-debian                set image to registry.gitlab.com/george-pon/mydebian11docker:latest  (default)"
             echo "        --image-alpine                set image to registry.gitlab.com/george-pon/myalpine3docker:latest"
             echo "        --image-oraclelinux8          set image to docker.io/georgesan/myoraclelinux8docker:latest"

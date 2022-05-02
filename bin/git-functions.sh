@@ -17,7 +17,7 @@ function git-user-name() {
     # GIT_IDを取得する
     local GIT_ID=`git config --global --list|grep user.name| sed 's/user.name=//g'`
     if [ -z "$GIT_ID" ]; then
-        echo user.name is null.
+        echo user_name_is_null
         return 1
     fi
     # スペースはアンダースコアに変換
@@ -189,6 +189,56 @@ function git-branch-clean-all() {
     done
 }
 
+function git-branch-test-tag-exists() {
+    # 引数で指定した名前のタグが存在するかチェック
+    local ARG_TAG_NAME=$1
+    if [ -z "$ARG_TAG_NAME" ] ; then
+        echo "git-branch-test-tag-exists: tag-name"
+        return 1
+    fi
+    local RESULT=$( git tag -l | egrep -e '^'"$ARG_TAG_NAME"'$' )
+    if [ -z "$RESULT" ] ; then
+        echo "NOTFOUND"
+        return
+    fi
+    echo "FOUND"
+}
+
+function git-branch-test-local-branch-exists() {
+    # 引数で指定した名前のリモートブランチが存在するかチェック
+    local ARG_BRANCH_NAME=$1
+    if [ -z "$ARG_BRANCH_NAME" ] ; then
+        echo "git-branch-test-local-branch-exists: branch-name"
+        return 1
+    fi
+    local RESULT=$( git branch -a | sed -e 's/^* /  /g' | awk '{print $1}' | egrep -e '^'"$ARG_BRANCH_NAME"'$' )
+    if [ -z "$RESULT" ] ; then
+        echo "NOTFOUND"
+        return
+    fi
+    echo "FOUND"
+}
+
+function git-branch-test-remote-branch-exists() {
+    # 引数で指定した名前のリモートブランチが存在するかチェック
+    local ARG_BRANCH_NAME=$1
+    if [ -z "$ARG_BRANCH_NAME" ] ; then
+        echo "git-branch-test-remote-branch-exists: branch-name"
+        return 1
+    fi
+    local RESULT=$( git branch -a | sed -e 's/^* /  /g' | awk '{print $1}' | grep -e '^remotes/origin/'"$ARG_BRANCH_NAME"'$' )
+    if [ -z "$RESULT" ] ; then
+        echo "NOTFOUND"
+        return
+    fi
+    echo "FOUND"
+}
+
+function git-branch-get-current-branch-name() {
+    local RESULT=$( f_git branch -a | grep '^* ' | sed -e 's/* /  /g' )
+    echo $RESULT
+}
+
 function git-branch-new() {
     #
     # 新しいブランチを作成する
@@ -203,14 +253,18 @@ function git-branch-new() {
     # 新しいブランチ branch_sub_name を作成して git add . ; git commit ; git push を一気に行う
     # git-branch-new  -m  "commit message"  -n branch_sub_name
     #
+    # 新しいブランチ branch_sub_name を作成して git add . ; git commit ; git push ; git tag を一気に行う
+    # git-branch-new  -m  "commit message"  -n branch_sub_name -t tag_name
+    #
 
-    # GIT_IDを取得する
+    # GITユーザー名を取得する
     local GIT_ID=$( git-user-name )
 
     local YMD_HMS=$( date +%Y%m%d_%H%M%S )
     local DEFAULT_BRANCH_NAME="$GIT_ID/#$YMD_HMS"
     local BRANCH_NAME=$DEFAULT_BRANCH_NAME
-    local COMMIT_COMMENT=""
+    local COMMIT_COMMENT=
+    local ARG_TAG_LIST=
 
     # 引数解析
     while true
@@ -219,14 +273,19 @@ function git-branch-new() {
             break
         fi
 
-        if [ "$1" = "-m" ]; then
+        if [ x"$1"x = x"-m"x ]; then
             # -m comment があった場合は、コミットコメントとして採用。pushまで自動で行う。
             COMMIT_COMMENT=$2
             echo "auto commit mode. commit comment : $COMMIT_COMMENT"
             shift
-        elif [ "$1" = "-n" ]; then
+        elif [ x"$1"x = x"-n"x ]; then
             BRANCH_NAME="${DEFAULT_BRANCH_NAME}_$2"
             echo "named branch mode. new branch name : $BRANCH_NAME"
+            shift
+        elif [ "$1" = "-t" ]; then
+            # -t tag があった場合は、タグ付けまで自動で行う。
+            ARG_TAG_LIST="$ARG_TAG_LIST $2"
+            echo "auto tag mode. tag : $ARG_TAG_LIST"
             shift
         else
             # 引数があった場合はブランチ名として採用
@@ -249,17 +308,68 @@ function git-branch-new() {
     f_git fetch --prune
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
-    # branchを新しく作成する
-    f_git branch $BRANCH_NAME
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+    # ワークの中に未コミットのファイルがあるかチェック
+    local CHKDURTY=$( git-status-check )
 
-    # 作成したブランチに切り替え
-    f_git checkout $BRANCH_NAME
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+    # ローカルブランチが存在するか確認
+    local CHK_LOCAL_BRANCH=$( git-branch-test-remote-branch-exists $BRANCH_NAME )
+    echo "checking local branch ... CHK_LOCAL_BRANCH=$CHK_LOCAL_BRANCH"
+
+    # リモートブランチが存在するか確認
+    local CHK_REMOTE_BRANCH=$( git-branch-test-remote-branch-exists $BRANCH_NAME )
+    echo "checking remote branch ... CHK_REMOTE_BRANCH=$CHK_REMOTE_BRANCH"
+
+    # 現在のブランチ名とターゲットブランチ名が同じなら、そのまま使う
+    CURRENT_BRANCH_NAME=$( git-branch-get-current-branch-name )
+    echo "BRANCH_NAME=$BRANCH_NAME"
+    echo "CURRENT_BRANCH_NAME=$CURRENT_BRANCH_NAME"
+    if [ x"$BRANCH_NAME"x = x"$CURRENT_BRANCH_NAME"x ] ; then
+        echo "current branch is $BRANCH_NAME. use it."
+    else
+        if [ x"$CHK_LOCAL_BRANCH"x = x"FOUND"x ] ; then
+            echo "local branch found. "
+
+            # ワーキングに未コミットファイルがある場合、ブランチ変更はできないはず。
+            if [ x"$CHKDURTY"x = x"DURTY"x  ] ; then
+                echo "WARNING working copy is durty. can not change branch."
+            fi
+            
+            # ブランチに切り替え
+            f_git checkout $BRANCH_NAME
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+        elif [ x"$CHK_REMOTE_BRANCH"x = x"FOUND"x ] ; then
+            echo "remote branch found. "
+
+            # ワーキングに未コミットファイルがある場合、ブランチ変更はできないはず。
+            if [ x"$CHKDURTY"x = x"DURTY"x  ] ; then
+                echo "WARNING working copy is durty. can not change branch."
+            fi
+
+            # ブランチに切り替え
+            f_git checkout $BRANCH_NAME
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+        else
+            echo "local / remote branch not found. create it."
+            # branchを新しく作成する
+            f_git branch $BRANCH_NAME
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+            # 作成したブランチに切り替え
+            f_git checkout $BRANCH_NAME
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+            # 新ブランチは upstream を設定してpush実行
+            f_git push --set-upstream origin $BRANCH_NAME
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+            # リモート情報を確認
+            f_git remote -v
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+        fi
+    fi
 
     # ブランチの一覧を表示
-    f_git branch -a
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+    # f_git branch -a
+    # RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
     # 現在のステータスを表示
     f_git status
@@ -274,13 +384,42 @@ function git-branch-new() {
 
     # コミットコメントがある場合は、add / commit / push まで行う
     if [ ! -z "$COMMIT_COMMENT" ]; then
-        f_git add .
-        RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-        f_git commit -m "$COMMIT_COMMENT"
-        RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+        if [ x"$CHKDURTY"x = x"DURTY"x ] ; then
+            f_git add .
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+            f_git commit -m "$COMMIT_COMMENT"
+            RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+        fi
+        # push を実行
         f_git push --set-upstream origin $BRANCH_NAME
         RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
     fi
+
+    # タグ名付与がある場合はタグ名pushを実行
+    for i in $ARG_TAG_LIST
+    do
+        git-branch-tag-and-push $i
+        RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+    done
+}
+
+function git-branch-delete() {
+    # ブランチの削除を実施
+    # git-branch-delete branch-name
+    if [ $# -eq 0 ] ; then
+        echo "git-branch-delete branch-name"
+        return 1
+    fi
+
+    for BRANCH_NAME in "$@"
+    do
+        # local ブランチの削除
+        f_git branch -d ${BRANCH_NAME}
+        RC=$? ; if [ $RC -ne 0 ] ; then return 1 ; fi
+        # remote ブランチの削除
+        f_git push origin :${BRANCH_NAME}
+        RC=$? ; if [ $RC -ne 0 ] ; then return 1 ; fi
+    done
 }
 
 function git-branch-status-all() {
@@ -362,15 +501,43 @@ function git-branch-tag-remove-and-push() {
     done
 }
 
-# developからmasterにマージする
-function git-branch-merge-master() {
+# arg1 から arg2 にマージする
+function git-branch-merge() {
+    local MERGE_MESSAGE="auto merge"
+    local ARG_SRC
+    local ARG_DST
+    local ARG_CNT=0
+
+    while true
+    do
+        if [ $# -eq 0 ]; then
+            break
+        fi
+
+        if [ x"$1"x = x"-m"x ]; then
+            MERGE_MESSAGE=$2
+            shift
+        elif [ $ARG_CNT -eq 0 ]; then
+            ARG_SRC=$1
+            ARG_CNT=$(( ARG_CNT + 1 ))
+        elif [ $ARG_CNT -eq 1 ]; then
+            ARG_DST=$1
+            ARG_CNT=$(( ARG_CNT + 1 ))
+        fi
+        shift
+    done
+
+    if [ -z "$ARG_SRC" -o -z "$ARG_DST" ] ; then
+        echo "git-branch-merge  develop  master  ... merge develop into master"
+        return 1
+    fi
 
     # pullする
     f_git pull
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
     # masterをチェックアウトする
-    f_git checkout master
+    f_git checkout $ARG_DST
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
     # pullする
@@ -378,7 +545,7 @@ function git-branch-merge-master() {
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
     # developをマージする
-    f_git merge develop
+    f_git merge -m "$MERGE_MESSAGE" $ARG_SRC
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
     # commitする
@@ -390,42 +557,11 @@ function git-branch-merge-master() {
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
     # developをチェックアウトする
-    f_git checkout develop
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-
-}
-
-# developからmainにマージする
-function git-branch-merge-main() {
-
-    # pullする
-    f_git pull
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-
-    # mainをチェックアウトする
-    f_git checkout main
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-
-    # pullする
-    f_git pull
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-
-    # developをマージする
-    f_git merge develop
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-
-    # commitする
-    #f_git commit -m "merge from develop"
+    #f_git checkout $ARG_SRC
     #RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
 
-    # pushする
-    f_git push
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-
-    # developをチェックアウトする
-    f_git checkout develop
-    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
-
+    # 状態表示
+    f_git status
 }
 
 # コミットしてpushする
@@ -436,6 +572,7 @@ function git-branch-add() {
     # 引数解析
     if [ $# -eq 0 ]; then
         echo "git-branch-add  [-m commit-comment ]  [ -t tag ]"
+        return 1
     fi
     # 引数解析
     while true
@@ -497,6 +634,61 @@ function git-branch-cherry-pick() {
 
     git cherry-pick  --allow-empty    "$COMMIT_IDS"
     RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+}
+
+#
+# git sparse checkout を行う。git 2.25以降。巨大gitプロジェクトの中から一部のディレクトリだけ取り出す。
+#
+# git-branch-sparse-checkout  http://hoge.git.com/user/proj.git  dir-name-1
+# 
+# git-branch-sparse-checkout -t tag-name  http://hoge.git.com/user/proj.git  dir-name-1  [dir-name-2]
+#
+function git-branch-sparse-checkout() {
+    local ARG_GITURL=$1
+    local ARG_PATH_LIST=
+    local ARG_TAG_NAME=
+    local ARG_CNT=0
+    local USAGE_MSG="git-branch-sparse-checkout  [-t tag-name]  git-url  path-1 [path-2...]"
+
+    while true
+    do
+        if [ $# -eq 0 ] ; then
+            break
+        fi
+
+        if [ x"$1"x = x"--help"x ] ; then
+            echo "$USAGE_MSG"
+            return 1
+        elif [ x"$1"x = x"-t"x ] ; then
+            ARG_TAG_NAME="$2"
+            shift
+        elif [ $ARG_CNT -eq 0 ] ; then
+            ARG_GITURL=$1
+            ARG_CNT=$(( ARG_CNT + 1 ))
+        elif [ $ARG_CNT -gt 0 ] ; then
+            ARG_PATH_LIST="$ARG_PATH_LIST $1"
+            ARG_CNT=$(( ARG_CNT + 1 ))
+        fi
+        shift
+    done
+
+    if [ -z "$ARG_GITURL" ] ; then
+        echo "$USAGE_MSG"
+        return 1
+    fi
+
+    git clone --filter=blob:none  $ARG_GITURL
+    RC=$? ; if [ $RC -ne 0 ]; then return 1; fi
+
+    local PROJ_SUBDIR=${ARG_GITURL##*/}
+    local PROJ_DIR=${PROJ_SUBDIR%%.git}
+    pushd $PROJ_DIR
+        git sparse-checkout init
+        git sparse-checkout set $ARG_PATH_LIST
+        # タグ名指定があるなら、指定してチェックアウト実施
+        git checkout $ARG_TAG_NAME
+    popd
 
 }
 

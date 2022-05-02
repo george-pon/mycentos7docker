@@ -3,6 +3,7 @@
 #  コピーペーストしやすい形にテキストファイルを標準出力に出力する
 #
 #  2019.10.21 バイナリ転送モードも追加
+#  2022.05.02 exclude オプション追加
 #
 
 
@@ -23,6 +24,8 @@ function f_is_text_file() {
         return 0
     elif echo $fileType | grep "application/json" > /dev/null ; then
         return 0
+    elif echo $fileType | grep "text/x-lisp" > /dev/null ; then
+        return 0
     fi
     return 1
 }
@@ -36,6 +39,7 @@ function f-shar-cat() {
     local binary_mode=
     local allow_binary=
     local allow_newer_opt=
+    local exclude_opt=
     # 引数解析
     while [ $# -gt 0 ];
     do
@@ -45,6 +49,7 @@ function f-shar-cat() {
             echo "        --binary-mode  ... transfer files in tar file and base64"
             echo "        --allow-binary ... allow binary file in base64 encode"
             echo "        --newer file ... find newer file"
+            echo "        --exclude pattern ... exclude pattern"
             return 0
         fi
         if [ x"$1"x = x"--binary-mode"x ]; then
@@ -67,11 +72,22 @@ function f-shar-cat() {
             shift
             continue
         fi
+        if [ x"$1"x = x"--exclude"x ]; then
+            exclude_opt="$2"
+            shift
+            shift
+            continue
+        fi
         break
     done
 
     local target_dir="$@"
-    local file_list=$( find $target_dir $allow_newer_opt | grep -v ".git/"  )
+    local file_list=
+    if [ -n "$exclude_opt" ] ; then
+        file_list=$( find $target_dir $allow_newer_opt | grep -v ".git/" | grep -v "$exclude_opt" )
+    else
+        file_list=$( find $target_dir $allow_newer_opt | grep -v ".git/"  )
+    fi
     local i=
     if [ x"$binary_mode"x = x"true"x ]; then
         # binary mode の場合、全ファイルをtarで送る
