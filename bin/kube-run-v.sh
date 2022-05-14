@@ -8,9 +8,9 @@
 #
 #   podからexitした後、ディレクトリの内容をPodから取り出してカレントディレクトリに上書きする。
 #
-#   お気に入りのコマンドをインストール済みのdockerイメージを使って作業しよう
+#   お気に入りのコマンドをインストール済みのdockerイメージを使ってカレントディレクトリをコンテナに持ち込んで作業しよう。
 #
-#   docker run -v $PWD:$( basename $PWD ) centos  みたいなモノ
+#   docker run -v $PWD:$( basename $PWD ) debian みたいなモノ
 #
 
 # set WINPTY_CMD environment variable when it need. (for Windows MSYS2)
@@ -147,15 +147,31 @@ function f-check-and-run-recover-sh() {
 # kubernetes server version文字列(1.11.6)をechoする
 # k3s環境だと1.14.1-k3s.4なので、-k3s.4の部分はカットする
 function f-kubernetes-server-version() {
-    local RESULT=$( kubectl version | grep "Server Version" | sed -e 's/^.*GitVersion://g' -e 's/, GitCommit.*$//g' -e 's/"//g' -e 's/^v//g' -e 's/-.*$//g' )
-    echo $RESULT
+    local RESULT1=$( kubectl version --short 2>/dev/null | grep "Server Version" | sed -e 's/^.*://g' | sed -e 's/^.*v//g' )
+    local RESULT2=$( kubectl version 2>/dev/null | grep "Server Version" | sed -e 's/^.*GitVersion://g' -e 's/, GitCommit.*$//g' -e 's/"//g' -e 's/^v//g' -e 's/-.*$//g' )
+    if [ -n "$RESULT1" ] ; then
+	echo $RESULT1
+	return
+    fi
+    if [ -n "$RESULT2" ] ; then
+	echo $RESULT2
+	return
+    fi
 }
 
 # kubernetes client version文字列(1.11.6)をechoする
 # k3s環境だと1.14.1-k3s.4なので、-k3s.4の部分はカットする
 function f-kubernetes-client-version() {
-    local RESULT=$( kubectl version | grep "Client Version" | sed -e 's/^.*GitVersion://g' -e 's/, GitCommit.*$//g' -e 's/"//g' -e 's/^v//g' -e 's/-.*$//g' )
-    echo $RESULT
+    local RESULT1=$( kubectl version --short 2>/dev/null | grep "Client Version" | sed -e 's/^.*://g' | sed -e 's/^.*v//g' )
+    local RESULT2=$( kubectl version 2>/dev/null | grep "Client Version" | sed -e 's/^.*GitVersion://g' -e 's/, GitCommit.*$//g' -e 's/"//g' -e 's/^v//g' -e 's/-.*$//g' )
+    if [ -n "$RESULT1" ] ; then
+	echo $RESULT1
+	return
+    fi
+    if [ -n "$RESULT2" ] ; then
+	echo $RESULT2
+	return
+    fi
 }
 
 # kubernetes version 文字列(1.11.6)を比較する
@@ -308,7 +324,7 @@ function f-kube-run-v() {
     fi
 
     # check kubectl version
-    kubectl version > /dev/null
+    kubectl version 1>/dev/null 2>/dev/null
     RC=$? ; if [ $RC -ne 0 ]; then echo "kubectl version error. abort." ; return $RC; fi
 
     local namespace=

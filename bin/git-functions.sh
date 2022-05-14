@@ -34,11 +34,18 @@ function git-status-check() {
 }
 
 function git-lol() {
+    # ログ表示
     f_git log --graph --decorate --pretty=oneline --abbrev-commit
 }
 
 function git-lola() {
+    # ログ表示
     f_git log --graph --decorate --pretty=oneline --abbrev-commit --all
+}
+
+function git-ls-files() {
+    # ファイルのアクセス許可属性の表示
+    f_git ls-files -s
 }
 
 function git-branch-a() {
